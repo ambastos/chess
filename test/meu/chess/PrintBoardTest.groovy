@@ -5,14 +5,14 @@ import static org.junit.Assert.*;
 
 import java.awt.event.KeyEvent;
 
+import javax.swing.plaf.multi.MultiSeparatorUI;
+
 import meu.chess.pieces.Knight
 import meu.chess.pieces.Pawn
 import meu.chess.pieces.Piece;
 
 import org.junit.Before;
 import org.junit.Test;
-
-
 
 class PrintBoardTest   {
 	
@@ -21,6 +21,10 @@ class PrintBoardTest   {
 	@Before
 	void before() {
 		board = new Board()
+	}
+	
+	def S (cordinate) {
+		new Square(cordinate)
 	}
 
     @Test
@@ -498,13 +502,13 @@ class PrintBoardTest   {
 		assert "G7" == diagonals[1].diagonal[6].cordinate
 		assert "H8" == diagonals[1].diagonal[7].cordinate
 		
-		assert "B8" == diagonals[2].diagonal[0].cordinate
-		assert "C7" == diagonals[2].diagonal[1].cordinate
-		assert "D6" == diagonals[2].diagonal[2].cordinate
+		assert "H2" == diagonals[2].diagonal[0].cordinate
+		assert "G3" == diagonals[2].diagonal[1].cordinate
+		assert "F4" == diagonals[2].diagonal[2].cordinate
 		assert "E5" == diagonals[2].diagonal[3].cordinate
-		assert "F4" == diagonals[2].diagonal[4].cordinate
-		assert "G3" == diagonals[2].diagonal[5].cordinate
-		assert "H2" == diagonals[2].diagonal[6].cordinate
+		assert "D6" == diagonals[2].diagonal[4].cordinate
+		assert "C7" == diagonals[2].diagonal[5].cordinate
+		assert "B8" == diagonals[2].diagonal[6].cordinate
 		
 	}
 	
@@ -515,11 +519,11 @@ class PrintBoardTest   {
 		def diagonals = board.getDiagonals("E5")
 		
 		assert 2 == diagonals.size()
-		assert ["D4","C3", "B2", "A1"] == diagonals[1].cordinatesFromSource()[1]
-		assert ["F6","G7", "H8"] == diagonals[1].cordinatesFromSource()[2]
+		assert [S("D4"),S("C3"), S("B2"), S("A1")] == diagonals[1].cordinatesFromSource()[1]
+		assert [S("F6"),S("G7"), S("H8")] == diagonals[1].cordinatesFromSource()[2]
 		
-		assert ["D6","C7", "B8"] == diagonals[2].cordinatesFromSource()[1]
-		assert ["F4","G3", "H2"] == diagonals[2].cordinatesFromSource()[2]
+		assert [S("D6"),S("C7"), S("B8")] == diagonals[2].cordinatesFromSource()[1]
+		assert [S("F4"),S("G3"), S("H2")] == diagonals[2].cordinatesFromSource()[2]
 		
 		
 	}
@@ -531,8 +535,8 @@ class PrintBoardTest   {
 		def diagonals = board.getDiagonals("E8")
 		
 		assert 2 == diagonals[1].cordinatesFromSource().size()
-		assert ["D7","C6", "B5", "A4"] == diagonals[1].cordinatesFromSource()[1]
-		assert ["F7","G6", "H5"] == diagonals[1].cordinatesFromSource()[2]
+		assert [S("D7"),S("C6"), S("B5"), S("A4")] == diagonals[1].cordinatesFromSource()[1]
+		assert [S("F7"),S("G6"), S("H5")] == diagonals[1].cordinatesFromSource()[2]
 		
 		
 	}
@@ -655,5 +659,27 @@ class PrintBoardTest   {
 		assertEquals  "G7", LSquares[2].cordinate
 		assertEquals  "F6", LSquares[3].cordinate
 		assertEquals 4, LSquares.size()
+	}
+	
+	@Test
+	void deveRetonarAUltimaPecaMovida() {
+		
+		board.initializeWithInitialPosition()
+		board.movePiece(new Pawn(WHITE), "E2", "E4")
+		board.movePiece(new Knight(WHITE), "G1", "F3")
+		
+		Piece piece = board.lastMovedPiece
+		assert piece.currentSquare.cordinate == "F3"
+	}
+	
+	@Test
+	void aoOcorrerUmErroAoMovimentarUmaPecaDeveSeVoltarAUltimaPecaMovida() {
+		 
+		fail("Esse teste esta falhando")	
+	}
+	@Test
+	void aoOcorrerUmErroAoMovimentarUmaPecaDeveApagarAReferenciaAUltimaPecaMovida() {
+		 
+		fail("Esse teste esta falhando")
 	}
 }

@@ -5,6 +5,11 @@
 <doc/>
 </property>
 </declaringtype>
+<declaringtype type="java.lang.Object">
+<property isActive="true" isStatic="false" name="piece" type="java.lang.Object">
+<doc/>
+</property>
+</declaringtype>
 <declaringtype type="meu.chess.Board">
 <method isActive="true" isStatic="false" name="inicializar" type="java.lang.String">
 <parameters useNamedArguments="false"/>

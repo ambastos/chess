@@ -30,9 +30,9 @@ class Board {
 	
 	def squares = [:]
 	def board = ""
-	def application = false
 	
-	def kingInCheck
+	boolean application = false
+	Piece lastMovedPiece = null
 	
 	def cursorCordinate = "A1"
 	def selectPieceOnCursor = false
@@ -41,6 +41,7 @@ class Board {
 	
 	BoardMovement boardMovement = new BoardMovement(this)
 	BoardFactory boardFactory =  new BoardFactory(this)
+	Atack atack = new Atack(this)
 	
 	//Print the chessBoard
 	public String draw() {
@@ -66,7 +67,7 @@ class Board {
 				def cordinate = colum+line
 				createSquares(pieces, cordinate)
 			}			
-		}				
+		}
 	}
 	
 	def initializeWithInitialPosition() {
@@ -90,8 +91,18 @@ class Board {
 		}
 	}
 	
-	def getSquareBy(cordinate) {
+	Square getSquareBy(cordinate) {
 		squares.get(cordinate)
+	}
+	
+	def getSquaresByCordinates(cordinates) {
+		def squaresBy =[]
+		for (cordinate in cordinates) {
+			def square = this.getSquareBy(cordinate)
+			if (square !=null)
+				squaresBy.add(this.getSquareBy(cordinate))
+		}
+		squaresBy
 	}
 	
 	def getKingEnemyCordinate(kingEnemyColor) {
@@ -127,139 +138,34 @@ class Board {
 		squares.containsKey(cordinate)
 	}
 	
+	//ATACK
 	def isThereKingInCheck(color) {
- 		def king =  getKingFromColor(color)
-		def square = king.currentSquare
-		
-		isSquareAtacked(square, color)
+ 		atack.isThereKingInCheck(color)
 	}
 
 	def isSquareAtacked(square, color) {
-
-		if  (isSquareVerticallyAttacked(square, color)) {
-			return true
-		}
-			
-		if (isSquareHorizontallyAtacked(square, color)) {
-			return true
-		}
-		
-		if (isSquareDiagonallyAtacked(square, color)) {
-			return true
-		}	 
-		
-		if (isLShapedAtacked(square, color)) {
-			return true
-		}	
-		return false
+		atack.isSquareAtacked(square, color)
+	}
+	
+	def isAtackedByPawn(square, color) {
+		atack.isAtackedByPawn(square, color)
 	}
 	
 	def isSquareDiagonallyAtacked(square,color) {
-		def check = false
-		
-		def diagonals = getDiagonals(square.cordinate)
-		for (objDiagonal in diagonals) {
-			for (currentSquare in objDiagonal.value.diagonal) {
-				
-				def pieceOnSquare = currentSquare.content
-				if (isThereAPieceOfSameColor(pieceOnSquare, square, color)) 
-					break
-				if (isThisSquareAttackedByQueenOrBishop(pieceOnSquare, color) ) 
-					return true
-			}	
-		}
-		
-		return false
+		atack.isAtackedByPawn(square, color)
 	}
 	
-	def isThereAPieceOfSameColor(pieceOnSquare, square, color) {
-		pieceOnSquare != square.content && pieceOnSquare?.color == color
-	}
-	
-	private boolean isThisSquareAttackedByQueenOrBishop(pieceOnSquare, colorOfOwnPiece) {
-		pieceOnSquare?.color != colorOfOwnPiece && ( pieceOnSquare instanceof Queen || pieceOnSquare instanceof Bishop)
-	}
-	
-	private boolean isSquareAttackedByQueenOrRock(pieceOnSquare, color) {
-		if (pieceOnSquare?.color != color) {
-			if (pieceOnSquare instanceof Queen || pieceOnSquare instanceof Rock) {
-				return true
-			}
-		}
-		return false
-	}
-
 	private isLShapedAtacked(square, color) {
-		
-		def LShape = getLShape(square.cordinate)
-		for (currentSquare in LShape) {
-			def pieceOnSquare = currentSquare?.content
-			if (isThereAPieceOfSameColor(pieceOnSquare, square, color)) 
-				break
-			
-			if (isSquareAttackeByKnight(pieceOnSquare, color)) 
-				return true
-		}
-		return false
-	}
-	
-	private def isSquareAttackeByKnight(pieceOnSquare, color) {
-		if (pieceOnSquare?.color != color) {
-			if (pieceOnSquare instanceof Knight) {
-				return true
-			}
-		}
-		return false
+		atack.isLShapedAtacked(square, color)
 	}
 	
 	private isSquareHorizontallyAtacked(square, color) {
-		
-		def columnNumber = getNumberOfColumnFromCordinate(square.cordinate)
-		def line = getLineFromCordinate(square.cordinate)
-
-		def finalSquareCordinates = []
-		finalSquareCordinates.add(getCordinateFromColumNumberAndLine(1,line))
-		finalSquareCordinates.add(getCordinateFromColumNumberAndLine(MAX_NUMBER_OF_COLUMNS,line))
-
-		for (finalSquareCordinate in finalSquareCordinates) {
-			def horizontal = getHorizontal(square.cordinate, finalSquareCordinate)
-			for (currentSquare in horizontal) {
-				def pieceOnSquare = currentSquare?.content
-				if (isThereAPieceOfSameColor(pieceOnSquare, square, color)) 
-					break
-				
-				if (isSquareAttackedByQueenOrRock(pieceOnSquare, color))
-					return true
-			}
-		}
-		return false
+		atack.isSquareHorizontallyAtacked(square, color)
 	}
 
 	private boolean isSquareVerticallyAttacked(square, color) {
-		
-		def columnNumber = getNumberOfColumnFromCordinate(square.cordinate)
-		def line = getLineFromCordinate(square.cordinate)
-		
-		def finalSquareCordinates = []
-		finalSquareCordinates.add(getCordinateFromColumNumberAndLine(columnNumber,1))
-		finalSquareCordinates.add(getCordinateFromColumNumberAndLine(columnNumber,MAX_NUMBER_OF_LINES))
-
-		for (finalSquareCordinate in finalSquareCordinates) {
-			def vertical = getVertical(square.cordinate, finalSquareCordinate)
-			for (currentSquare in vertical) {
-				def pieceOnSquare = currentSquare?.content
-				if (isThereAPieceOfSameColor(pieceOnSquare, square, color)) 
-					return false
-					
-				if (isSquareAttackedByQueenOrRock(pieceOnSquare, color)) 
-					return true
-			
-			}
-		}	
-		return false
+		atack.isSquareVerticallyAttacked(square, color)
 	}
-	
-	
 	
 	def isDiagonal(initialSquareCordinate, finalSquareCordinate ) {
 		boardMovement.isDiagonal(initialSquareCordinate, finalSquareCordinate)
@@ -300,4 +206,14 @@ class Board {
 	def isAValidCordinate(cordinate) {
 		squares.containsKey(cordinate)
 	}
+	
+	def void applyChangesOnSquares() {
+		for (Square square in squares.values()) {
+			if (square.isChanged()) {
+				square.update(square.cordinate, square.futureContent)
+				lastMovedPiece = square.content
+			}	
+		}
+	}
+	
 }

@@ -5,6 +5,7 @@ import static Board.*
 import static meu.chess.utils.ConvertUtil.*
 import meu.chess.Board
 import meu.chess.MovimentoInvalidoException
+import meu.chess.Square
 
 class Pawn extends Piece implements ValidPiece {
 
@@ -24,96 +25,107 @@ class Pawn extends Piece implements ValidPiece {
 		movesValidator(this.color, square, newPosition)
 	}
 	
-	def movesValidator(color, square, newPosition) {
-		def colorOfOlderSquare = color
-		def columnOfOldeSquare = square.column
-		def lineOfOlderSquare = square.line			
-		def columnOfNewerSquare = getColumnFromCordinate(newPosition);
-		def lineOfNewerSquare = getLineFromCordinate(newPosition);			
-		def board = square.board
-		def newSquare = board.squares.get(newPosition)
-		def pieceOfNewSquare = newSquare.content
-		def possibleLines = []
+	def isAtackedBy(pieceOnSquare, square, newSquare) {
+		isOneColumnBeside(square, newSquare) && isOneLineAhead(pieceOnSquare, square, newSquare)
+	}
+	
+	private isOneColumnBeside = { square, newSquare ->
+		( abs( newSquare.columnNumber - square.columnNumber) == 1 )
+	}
+	private isOneLineAhead = { pieceOnSquare, square, newSquare -> 
+		if (pieceOnSquare.isBlack())
+			( square.line - newSquare.line ) == 1
+		else
+			( newSquare.line - square.line ) == 1
+	}
+	
+	def isCatchableEnPassant(pieceOnSquare, square, newSquare) { 
+		Board board = square.board
 		
-		def isWhite = {
-			colorOfOlderSquare == WHITE
+		if (isAtackedBy(pieceOnSquare, square, newSquare)) {
+		
+			def previousCordinate
+			if (pieceOnSquare.isBlack())
+				previousCordinate = getNewCordinateFrom(newSquare.cordinate, 0, 1)
+			else
+				previousCordinate = getNewCordinateFrom(newSquare.cordinate, 0, -1)
+				
+			def previousPieceOnCordinate = board.getSquareBy(previousCordinate).content
+			
+			return previousPieceOnCordinate == board.lastMovedPiece &&
+				(board.getLastMovedPiece() instanceof Pawn) &&
+				board.getLastMovedPiece().color != pieceOnSquare.color
 		}
+		false
+	}
+	
+	def movesValidator(color, Square square, newPosition) {
 		
-		def isBlack = {
-			colorOfOlderSquare == BLACK
-		}
-		
-		def isInitialLineForPawns = {
-			if (isWhite() ) {
-				lineOfOlderSquare == 2
-			}else {
-				lineOfOlderSquare == 7
-			}
-		} 
+		Board board = square.board
+		def newSquare = board.getSquareBy(newPosition)
+		Piece pieceOnSquare = square.content
+		Piece pieceOfNewSquare = newSquare.content
 		
 		def isFirstLineForWhitePawns = {
-			lineOfOlderSquare == 2
+			square.line == 2
 		}
 		
 		def isFirstLineForBlackPawns = {
-			lineOfOlderSquare == 7
+			square.line == 7
 		}
 		
-		def fillPossibilities = {
-			if (isWhite()) {
-				if (isFirstLineForWhitePawns() ) {
-					possibleLines.add(lineOfOlderSquare+1)
-					possibleLines.add(lineOfOlderSquare+2)
-				}else {
-					possibleLines.add(lineOfOlderSquare+1)
-					
-				}
+		def isAValidInitialLineForPawns = {
+			if (pieceOnSquare.isWhite()) {
+				getLineFromCordinate(newPosition) >= 2
 			}else {
-				if (isFirstLineForBlackPawns() ) {
-					possibleLines.add(lineOfOlderSquare-1)
-					possibleLines.add(lineOfOlderSquare-2)
-				}else {
-					possibleLines.add(lineOfOlderSquare-1)
-				}
+				getLineFromCordinate(newPosition) <= 7
 			}
-			possibleLines
 		}
 		
-		def isCatchable = {
-			 
-			if (!(pieceOfNewSquare instanceof NullPiece) && pieceOfNewSquare.color != colorOfOlderSquare ) {
-				def isOneColumnBeside = ( abs( newSquare.columnNumber - square.columnNumber) == 1 )
-				def isOneLineAhead = ( newSquare.line - square.line ) == 1
-				if (isBlack()) {
-					isOneLineAhead = ( square.line - newSquare.line ) == 1
+		def isAValidSquareToMoveAhead = { cordinate ->
+			if (newSquare.isFilledWithPiece()) 
+				return false
+			
+			def distance = square.distanceBetweenThisCordinate(cordinate)
+			if (pieceOnSquare.isWhite()) 
+				if (isFirstLineForWhitePawns() ) {
+					return distance == [0:2] || distance == [0:1]
+				}else { 
+					return distance == [0:1]
 				}	
-				
-				if ( isOneColumnBeside && isOneLineAhead ) {
-					return true
-				}
-					
-			}else {
+			else 
+				if (isFirstLineForBlackPawns() ) { 
+					return  distance == [0:-2] || distance == [0:-1]
+				}else{ 
+					return distance == [0:-1]
+				}	
+			return false
+		}
+		
+		def isPieceOnNewSquareCatchable = {
+			
+			if (isCatchableEnPassant(pieceOnSquare, square, newSquare) ) 
 				return true
+			
+			if (!(pieceOfNewSquare instanceof NullPiece) && pieceOfNewSquare.color != pieceOnSquare.color ) {
+				
+				if (isAtackedBy(pieceOnSquare, square, newSquare) ) 
+					return true
+			}else {
+				return false
 			}
 			return false
 		}
 		
 		def validMovement = {  
-			if (!isInitialLineForPawns) {
+			if (!isAValidInitialLineForPawns()) 
 				throw new MovimentoInvalidoException("Linha inicial para o peão é inválida.")
-			}
-				
-			if (!isCatchable()) {
-				throw new MovimentoInvalidoException("Movimento inválido para o peão em $square.cordinate.")				
-				
-			} else {
-				
-				possibleLines = fillPossibilities()
-				
-				if (!possibleLines.contains(lineOfNewerSquare) ) {
-					throw new MovimentoInvalidoException("Movimento inválido para o peão.")
-				}
-			}
+			
+			if (isPieceOnNewSquareCatchable()) 
+				return
+			
+			if (!isAValidSquareToMoveAhead(newPosition)) 
+				throw new MovimentoInvalidoException("Movimento inválido para o peão em $square.cordinate.")
 		}
 		
 		validMovement()

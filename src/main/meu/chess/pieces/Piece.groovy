@@ -25,8 +25,8 @@ class Piece {
 		return simbol
 	}
 	
-	def isWithPiece () {
-		simbol.equals(EMPTY_PIECE)
+	def isValid () {
+		!(this instanceof NullPiece)
 	}
 	
 	def isBlack() {
@@ -52,5 +52,9 @@ class Piece {
 	@Override
 	public String toString() {
 		return simbol;
+	}
+	
+	def isPawn(color) {
+		(this instanceof Pawn) && this?.color == color
 	}
 }

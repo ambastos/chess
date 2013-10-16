@@ -8,7 +8,8 @@ import static meu.chess.utils.ConvertUtil.*;
 
 class Square{
 						 
-	def content
+	Piece content
+	private futureContent
 	def cordinate = "  "
 	def color
 	def board 	  
@@ -21,6 +22,10 @@ class Square{
 		update(cordinate, null)
 	}
 	
+	def void updateTemporally(piece) {
+		futureContent = piece
+	}
+	
 	def void update(cordinate, piece) {
 		
 		this.cordinate = cordinate
@@ -31,6 +36,7 @@ class Square{
 		}else {
 			this.content = new NullPiece()
 		}
+		this.futureContent = null
 		this.content.currentSquare = this
 	}
 	
@@ -71,4 +77,30 @@ class Square{
 		return this.cordinate;
 	}	
 
+	@Override
+	public boolean equals(square) {
+		return this.cordinate == square.cordinate;
+	}
+	@Override
+	public int hashCode() {
+		def strNumberCordinate = String.valueOf(getNumberOfColumnFromCordinate(cordinate))+ String.valueOf(getLineFromCordinate(cordinate))
+		return Integer.valueOf(strNumberCordinate)
+	}
+	
+	def isChanged() {
+		futureContent !=null
+	}
+	
+	def distanceBetweenThisCordinate(cordinate) {
+		def difColumn =  getNumberOfColumnFromCordinate(cordinate) - getColumnNumber()
+		def difLine = getLineFromCordinate(cordinate) - getLine()
+		
+		def ret = [:]
+		ret.put(difColumn, difLine)
+		ret 
+	}
+	
+	def isFilledWithPiece() {
+		this.content !=null && !(this.content instanceof NullPiece)
+	}
 }

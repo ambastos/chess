@@ -24,73 +24,55 @@ public class BoardFactory {
 	public void movePiece(Piece piece, def currentPosition, def finalPosition) {
 
 		def square = board.squares.get(currentPosition)
-		
+		updateTemporallySquaresContent(currentPosition, finalPosition, piece)
 		verifyIfMovementIsValid(piece, currentPosition, finalPosition, square)
+		updateFinalSquareIfEnPassant(piece, square, finalPosition)
 		
-		updateSquaresContent(currentPosition, finalPosition, piece)
-		
+		board.applyChangesOnSquares()
 	}
 
 	private verifyIfMovementIsValid(Piece piece, currentPosition, finalPosition, square) {
 		validMovement(piece, currentPosition, finalPosition, square)
 		piece.validMovement(square, finalPosition)
 	}
+
+	private updateFinalSquareIfEnPassant(Piece piece, square, finalPosition) {
+		if (piece instanceof Pawn) { 
+			Pawn pawn = piece
+			def finalSquare = board.getSquareBy(finalPosition)
+			if (pawn.isCatchableEnPassant(piece, square, finalSquare )) {
+				def previousCordinate
+				if (pawn.isBlack())
+					previousCordinate = getNewCordinateFrom(finalSquare.cordinate, 0, 1)
+				else
+					previousCordinate = getNewCordinateFrom(finalSquare.cordinate, 0, -1)
+
+				Square previousSquare = board.getSquareBy(previousCordinate)
+				previousSquare.update(previousCordinate, new NullPiece())
+			}
+		}
+	}
 	
 	private validMovement(piece, currentPosition, finalPosition, square) {
-		if (isThisSquareEmpty(square))
-			throw new MovimentoInvalidoException("Nao há peça nessa casa ($square.cordinate)")
-
-		def finalSquare = board.squares.get(finalPosition)
-		
-		if (!board.hasThisSquare(currentPosition)) 
-			throw new MovimentoInvalidoException("A casa de origem $currentPosition é inválida.")
-			
-		if (!board.hasThisSquare(finalPosition))
-			throw new MovimentoInvalidoException("A casa de destino $finalPosition é inválida.")
-		
-		if (!piece.isTheSameColorAndType(square.content)) {
-			throw new MovimentoInvalidoException("Não há a peça ($piece) desse tipo na casa informada.")
-		}	
-			
-		if (finalSquare == null)
-			throw new MovimentoInvalidoException("A casa de destino $finalPosition da peça $square.content.description é inválida.")
-
-		if (currentPosition == finalPosition) {
-			def d = square.content.description
-			throw new MovimentoInvalidoException("A própria peça($d) não pode se mover para a mesma casa.")
-		}
-
-		def pieceInSquare = square.content
-		if (finalSquare.hasPieceOfSameColor(pieceInSquare) )
-			throw new MovimentoInvalidoException("Movimento da peça $square.content.description não é valido devido a presença de $finalSquare.content.description na casa $finalPosition.")
-				
-		if (!square.isAKing() && board.isThereKingInCheck(square.content.color)) {
-			def king = board.getKingFromColor(square.content.color)
-			def kingCordinate = king.currentSquare.cordinate
-			throw new MovimentoInvalidoException("Não é possível mover a peça $square.content.description de $currentPosition para $finalPosition enquanto o rei em $kingCordinate se encontra em xeque.")
-		}
-
-		if (square.isAKing() && board.isSquareAtacked(finalSquare, square?.content?.color)) {
-			throw new MovimentoInvalidoException("Não é possível mover o rei para a casa $finalSquare.cordinate pois ela está em xeque.")
-		}			
-				
+		def validator = new MovementValidator(board,piece,square,currentPosition, finalPosition)			
+		validator.validate()		
 	}
+	
 
-	private isThisSquareEmpty(square) {
-		def pieceInSquare = square.content
-		def isAValidPiece = pieceInSquare instanceof ValidPiece
-		(pieceInSquare == null || !isAValidPiece)
-	}
-
-	private updateSquaresContent(initialPosition, finalPosition, Piece piece) {
+	private updateTemporallySquaresContent(initialPosition, finalPosition, Piece piece) {
 		
-		def initialSquare = board.squares.get(initialPosition)
-		initialSquare.update(initialPosition, new NullPiece())		
-		board.squares.put(initialPosition, initialSquare)
+		Square initialSquare = board.squares.get(initialPosition)
+		if (initialSquare !=null) {
+			initialSquare.updateTemporally(new NullPiece())
+			board.squares.put(initialPosition, initialSquare)
+		}
 		
-		def finalSquare = board.squares.get(finalPosition)
-		finalSquare.update(finalPosition, piece)
-		board.squares.put(finalPosition, finalSquare)
+		Square finalSquare = board.squares.get(finalPosition)
+		if (finalSquare !=null) {
+			finalSquare.updateTemporally(piece)
+			board.squares.put(finalPosition, finalSquare)
+		}
+		
 	}
 
 }

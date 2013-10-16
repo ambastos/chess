@@ -1,6 +1,9 @@
 package meu.chess.movement
 
 import static meu.chess.utils.ConvertUtil.*
+
+import com.google.common.collect.Ordering;
+
 import meu.chess.Board;
 
 protected class Diagonal {
@@ -39,11 +42,14 @@ protected class Diagonal {
 				def squareColumnNumber =  getNumberOfColumnFromCordinate(sourceSquareCordinate)
 				def columnNumber = getNumberOfColumnFromCordinate(it.cordinate)
 				if (columnNumber < squareColumnNumber) {
-					squaresFromDirection[1].add(it.cordinate)
+					squaresFromDirection[1].add(it)
 				}else if (columnNumber > squareColumnNumber) {
-					squaresFromDirection[2].add(it.cordinate)
+					squaresFromDirection[2].add(it)
 				}
 			}
+			Collections.sort(squaresFromDirection[1], byCordinate)
+			Collections.reverse(squaresFromDirection[1])
+			Collections.sort(squaresFromDirection[2], byCordinate)
 			squaresFromDirection
 		}
 	}
@@ -79,10 +85,6 @@ protected class Diagonal {
 			}
 		}
 		
-		def revertSecondDiagonal = { diagonals ->
-			if (diagonals[2])
-				diagonals[2].diagonal = diagonals[2].diagonal.reverse()
-		}
 		
 		def columnNumber = getNumberOfColumnFromCordinate(squareCordinate)
 		def line = getLineFromCordinate(squareCordinate)
@@ -116,7 +118,6 @@ protected class Diagonal {
 		}
 		
 		removeEmptyDiagonal(diagonals)
-		revertSecondDiagonal(diagonals)
 		
 		diagonals
 		
@@ -148,5 +149,22 @@ protected class Diagonal {
 			}
 			squaresFromDiagonal
 		}
+	}
+	
+	
+	def byCordinate = new Ordering<String>() {
+		public int compare( squareA, squareB) {
+			
+			def columnA = getNumberOfColumnFromCordinate(squareA.cordinate)
+			def lineA = getLineFromCordinate(squareA.cordinate)
+			
+			def columnB = getNumberOfColumnFromCordinate(squareB.cordinate)
+			def lineB = getLineFromCordinate(squareB.cordinate)
+			
+			def partA = Integer.valueOf( String.valueOf(columnA)+String.valueOf(lineA))
+			def partB = Integer.valueOf( String.valueOf(columnB)+String.valueOf(lineB))
+			
+			return partA - partB
+		};
 	}
 }

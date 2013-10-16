@@ -13,8 +13,6 @@ import meu.chess.pieces.Piece;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Categories.ExcludeCategory;
-import org.junit.rules.ExpectedException;
 
 class PawnMovementTest extends TestPieceMovement {
 
@@ -106,7 +104,7 @@ class PawnMovementTest extends TestPieceMovement {
 	void deveLancarUmErroSeOPeaoMoverParaUmaColunaDiferenteDaAtual() {
 		
 		board.initializeWithInitialPosition()
-		board.movePiece(WHITE_PAWN, "H2", "G2")
+		board.movePiece(WHITE_PAWN, "H2", "G3")
 		
 	}
 	
@@ -221,15 +219,55 @@ class PawnMovementTest extends TestPieceMovement {
 		board.draw()
 	}
 	
+	
 	@Test(expected=MovimentoInvalidoException.class)
-	void naoDevePermitirCapturaOPeaoEmA3() {
+	void naoDevePermitirOPeaoSaltarOutraPecaAdversaria() {
 		
 		board.initializeWithInitialPosition()
-		
-		board.movePiece(WHITE_PAWN, "A2", "A4")		
-		board.movePiece(BLACK_PAWN , "A7", "A5")
-		board.movePiece(WHITE_PAWN , "A4", "A5")
+		board.movePiece(WHITE_PAWN, "E2", "E4")
+		board.movePiece(BLACK_PAWN, "E7", "E5")
+		board.movePiece(WHITE_PAWN, "E4", "E5")
 		
 	}
+	
+	@Test
+	void deveCapturarOPeaoNegroEmEnPassant() {
 		
+		board.initializeWithInitialPosition()
+		board.movePiece(WHITE_PAWN, "D2", "D3")
+		board.movePiece(BLACK_PAWN, "D7", "D5")
+		board.movePiece(WHITE_PAWN, "A2", "A3")
+		board.movePiece(BLACK_PAWN, "D5", "D4")
+		board.movePiece(WHITE_PAWN, "E2", "E4")
+		board.movePiece(BLACK_PAWN, "D4", "E3")
+		
+		//Não deve haver peça na casa E4
+		assert true == (board.getSquareBy("E4").content instanceof NullPiece)
+	}
+	
+	@Test(expected=MovimentoInvalidoException.class)
+	void naoDeveCapturarOPeaoNegroEmEnPassantSeOutraPecaJaFoiMovida() {
+		
+		board.initializeWithInitialPosition()
+		board.movePiece(WHITE_PAWN, "D2", "D3")
+		board.movePiece(BLACK_PAWN, "D7", "D5")
+		board.movePiece(WHITE_PAWN, "A2", "A3")
+		board.movePiece(BLACK_PAWN, "D5", "D4")
+		board.movePiece(WHITE_PAWN, "E2", "E4")
+		board.movePiece(new Knight(WHITE), "G1", "F3")
+		board.movePiece(BLACK_PAWN, "D4", "E3")//Seria EnPassant se não fosse o cavalo movido em F3
+		 
+	}
+	
+	@Test
+	void deveExibirAOpcaoDePromocaoDoPeao() {
+		fail("Esse teste esta falhando")	
+	}
+	
+	@Test(expected=MovimentoInvalidoException.class)
+	void naoDeveClonarOPeaoAoTentaloMoverParaTrasEParaFrenteNovamente() {
+		 
+		fail("Esse teste esta falhando")	
+	}	
+	
 }

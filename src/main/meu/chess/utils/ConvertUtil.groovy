@@ -30,7 +30,13 @@ class ConvertUtil {
 			BOARD_COLUMNS.get(column - 1)
 		}	
 	}
-	
+	/**
+	 * Define a new cordinate based on oldCordinate plus number of columns and number of lines
+	 * @param oldCordinate
+	 * @param numberOfColumns
+	 * @param numberOfLines
+	 * @return
+	 */
 	def static getNewCordinateFrom(oldCordinate, numberOfColumns, numberOfLines) {
 		
 		def oldColumnNumber = getNumberOfColumnFromCordinate(oldCordinate)

@@ -9,7 +9,7 @@ class BoardMovement {
 
 	Board board
 	def lShape
-	def diagonal 
+	Diagonal diagonal 
 	
 	BoardMovement(Board board) {
 		this.board = board
