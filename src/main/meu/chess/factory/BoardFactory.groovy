@@ -21,26 +21,42 @@ public class BoardFactory {
 	BoardFactory(board) {
 		this.board = board
 	}
-	public void movePiece(Piece piece, def currentPosition, def finalPosition) {
+	public void movePiece(Piece content, def currentPosition, def finalPosition) {
 
 		def square = board.squares.get(currentPosition)
-		updateTemporallySquaresContent(currentPosition, finalPosition, piece)
-		verifyIfMovementIsValid(piece, currentPosition, finalPosition, square)
-		updateFinalSquareIfEnPassant(piece, square, finalPosition)
+		def finalSquare = board.squares.get(finalPosition)
+		updateTemporallySquaresContent(currentPosition, finalPosition, content)
+		verifyIfMovementIsValid(content, currentPosition, finalPosition, square)
+		
+		updateFinalSquareIfEnPassant(content, square, finalPosition)
+		
 		
 		board.applyChangesOnSquares()
+		board.updateListOfMovements(finalSquare.content, currentPosition, finalPosition)
+		
 	}
 
-	private verifyIfMovementIsValid(Piece piece, currentPosition, finalPosition, square) {
-		validMovement(piece, currentPosition, finalPosition, square)
-		piece.validMovement(square, finalPosition)
+	private verifyIfMovementIsValid(Piece content, currentPosition, finalPosition, square) {
+		try {
+			validMovement(content, currentPosition, finalPosition, square)
+			content.validMovement(square, finalPosition)
+		} catch (e) {
+			cancelUpdates(finalPosition, square)
+			throw e	
+		}
+		
 	}
 
-	private updateFinalSquareIfEnPassant(Piece piece, square, finalPosition) {
-		if (piece instanceof Pawn) { 
-			Pawn pawn = piece
+	private cancelUpdates(finalPosition, square) {
+		board.getSquareBy(finalPosition).cancelUpdate()
+		square.cancelUpdate()
+	}
+
+	private updateFinalSquareIfEnPassant(Piece content, square, finalPosition) {
+		if (content instanceof Pawn) { 
+			Pawn pawn = content
 			def finalSquare = board.getSquareBy(finalPosition)
-			if (pawn.isCatchableEnPassant(piece, square, finalSquare )) {
+			if (pawn.isCatchableEnPassant(content, square, finalSquare )) {
 				def previousCordinate
 				if (pawn.isBlack())
 					previousCordinate = getNewCordinateFrom(finalSquare.cordinate, 0, 1)
@@ -48,28 +64,28 @@ public class BoardFactory {
 					previousCordinate = getNewCordinateFrom(finalSquare.cordinate, 0, -1)
 
 				Square previousSquare = board.getSquareBy(previousCordinate)
-				previousSquare.update(previousCordinate, new NullPiece())
+				previousSquare.update(previousCordinate, Piece.NULL_PIECE)
 			}
 		}
 	}
 	
-	private validMovement(piece, currentPosition, finalPosition, square) {
-		def validator = new MovementValidator(board,piece,square,currentPosition, finalPosition)			
+	private validMovement(content, currentPosition, finalPosition, square) {
+		def validator = new MovementValidator(board,content,square,currentPosition, finalPosition)			
 		validator.validate()		
 	}
 	
 
-	private updateTemporallySquaresContent(initialPosition, finalPosition, Piece piece) {
+	private updateTemporallySquaresContent(initialPosition, finalPosition, Piece content) {
 		
 		Square initialSquare = board.squares.get(initialPosition)
 		if (initialSquare !=null) {
-			initialSquare.updateTemporally(new NullPiece())
+			initialSquare.updateTemporally(Piece.NULL_PIECE)
 			board.squares.put(initialPosition, initialSquare)
 		}
 		
 		Square finalSquare = board.squares.get(finalPosition)
 		if (finalSquare !=null) {
-			finalSquare.updateTemporally(piece)
+			finalSquare.updateTemporally(content)
 			board.squares.put(finalPosition, finalSquare)
 		}
 		

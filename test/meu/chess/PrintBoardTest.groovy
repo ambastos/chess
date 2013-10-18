@@ -7,9 +7,12 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.plaf.multi.MultiSeparatorUI;
 
+import meu.chess.pieces.Bishop
 import meu.chess.pieces.Knight
+import meu.chess.pieces.NullPiece;
 import meu.chess.pieces.Pawn
 import meu.chess.pieces.Piece;
+import meu.chess.pieces.Queen
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +29,9 @@ class PrintBoardTest   {
 	def S (cordinate) {
 		new Square(cordinate)
 	}
+	
+	def WHITE_PAWN = new Pawn(WHITE) 
+	def BLACK_PAWN = new Pawn(BLACK)
 
     @Test
     void deveImprimirOTabuleiroCom8Por8CasasSemPecas() {
@@ -668,18 +674,58 @@ class PrintBoardTest   {
 		board.movePiece(new Pawn(WHITE), "E2", "E4")
 		board.movePiece(new Knight(WHITE), "G1", "F3")
 		
-		Piece piece = board.lastMovedPiece
-		assert piece.currentSquare.cordinate == "F3"
+		Piece content = board.lastMovedPiece
+		assert content.currentSquare.cordinate == "F3"
 	}
 	
 	@Test
 	void aoOcorrerUmErroAoMovimentarUmaPecaDeveSeVoltarAUltimaPecaMovida() {
 		 
-		fail("Esse teste esta falhando")	
+		board.initializeWithInitialPosition()
+		try {
+			board.movePiece(WHITE_PAWN, "E2", "E4")
+			board.movePiece(BLACK_PAWN, "D7", "D5")
+			board.movePiece(WHITE_PAWN, "E4", "D5")
+			board.movePiece(new Queen(BLACK), "D8", "D5")
+			board.movePiece(WHITE_PAWN, "A2", "A4")
+			board.movePiece(new Queen(BLACK), "D5", "E5")
+			board.movePiece(WHITE_PAWN, "F2", "F4")
+			fail()
+		} catch (e) {
+			def nullPiece =  board.getSquareBy("F4").content
+			def previousPiece =  board.getSquareBy("F2").content
+			board.movePiece(new Queen(WHITE), "D1", "E2")
+			
+			assert true == nullPiece instanceof NullPiece
+			assert true == previousPiece instanceof Pawn
+		} 
+		
 	}
 	@Test
-	void aoOcorrerUmErroAoMovimentarUmaPecaDeveApagarAReferenciaAUltimaPecaMovida() {
+	void aoOcorrerUmErroAoMovimentarUmaPecaOCursorDeveVoltarAoNormal() {
+		
 		 
 		fail("Esse teste esta falhando")
 	}
+	
+	@Test
+	void deveListarOsMovimentosEfetuados() {
+		board.initializeWithInitialPosition()
+		board.setApplication(true)
+		board.movePiece(WHITE_PAWN, "E2", "E4")
+		board.movePiece(BLACK_PAWN, "D7", "D5")
+		board.movePiece(WHITE_PAWN, "E4", "D5")
+		board.movePiece(new Queen(BLACK), "D8", "D6")
+		board.movePiece(WHITE_PAWN, "A2", "A4")
+		board.movePiece(new Queen(BLACK), "D6", "E5")
+		board.movePiece(new Bishop(WHITE), "F1", "E2")
+		
+		def moves = board.moves
+		assert "[E2-E4, D7-D5]" == moves.get(1).toString() 
+		assert "[E4-D5, QD8-D6]" == moves.get(2).toString()
+		assert "[A2-A4, QD6-E5]" == moves.get(3).toString()
+		assert "[BF1-E2]" == moves.get(4).toString() 
+	}
+	
+	
 }

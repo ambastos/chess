@@ -67,8 +67,8 @@ class BoardBuilder {
 				def column = posssibleColumns.get(i);
 				def cordinate = column+line
 				def square = squares.get(cordinate)
-				def content =  square.content;
-				def strColor = square.color == BLACK ? "*" : " "
+				def content =  square?.content;
+				def strColor = square?.color == BLACK ? "*" : " "
 				
 				strColumn = content !=null ? content.toString() : SquareEnum.EMPTY_SQUARE.toString()
 
@@ -104,9 +104,11 @@ class BoardBuilder {
 				}	
 			}else {
 				if (board.application && board.cursorCordinate == currentCordinate) {
-					strLine +="[_]|"
+					
 					if (board.selectPieceOnCursor) {
 						strLine+= "[X]|"
+					}else {
+						strLine +="[_]|"
 					}	
 				}else {
 					strLine +="___|"

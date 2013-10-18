@@ -1,10 +1,10 @@
 package meu.chess
 
-
-import meu.chess.pieces.King;
+import static meu.chess.pieces.Piece.*
+import static meu.chess.utils.ConvertUtil.*
+import meu.chess.pieces.King
 import meu.chess.pieces.NullPiece
-import meu.chess.pieces.Piece;
-import static meu.chess.utils.ConvertUtil.*;
+import meu.chess.pieces.Piece
 
 class Square{
 						 
@@ -14,27 +14,27 @@ class Square{
 	def color
 	def board 	  
 	
-	Square(def cordinate, def piece) {
-		update(cordinate, piece)
+	Square(def cordinate, def content) {
+		update(cordinate, content)
 	}
 	
 	Square(def cordinate){
 		update(cordinate, null)
 	}
 	
-	def void updateTemporally(piece) {
-		futureContent = piece
+	def void updateTemporally(content) {
+		futureContent = content
 	}
 	
-	def void update(cordinate, piece) {
+	def void update(cordinate, content) {
 		
 		this.cordinate = cordinate
 		this.color = getColorFromSquareCordinate(cordinate)
 		
-		if (piece !=null) {
-			this.content = piece
+		if (content !=null) {
+			this.content = content
 		}else {
-			this.content = new NullPiece()
+			this.content = NULL_PIECE
 		}
 		this.futureContent = null
 		this.content.currentSquare = this
@@ -60,12 +60,12 @@ class Square{
 		return content
 	}
 
-	def hasPieceOfSameColor(def piece) {
-		!(this.content instanceof NullPiece) &&  (this.content.color == piece?.color) 
+	def hasPieceOfSameColor(def content) {
+		!(this.content instanceof NullPiece) &&  (this.content.color == content?.color) 
 	}
 	
-	def hasPieceOfOpponent(def piece) {
-		!(this.content instanceof NullPiece) &&  (this.content.color != piece?.color)
+	def hasPieceOfOpponent(def content) {
+		!(this.content instanceof NullPiece) &&  (this.content.color != content?.color)
 	}
 	
 	def isAKing() {
@@ -102,5 +102,25 @@ class Square{
 	
 	def isFilledWithPiece() {
 		this.content !=null && !(this.content instanceof NullPiece)
+	}
+	
+	def isEmpty() {
+		this.content ==null || (this.content instanceof NullPiece)
+	}
+	
+	def getCurrentContent() {
+		if (futureContent !=null ) 
+			futureContent
+		else 
+			content
+	}
+	
+	def cancelUpdate() {
+		if (futureContent !=null)
+			futureContent = null
+	}
+	
+	def isFirstLineFromPieces() {
+		getLine() ==1 || getLine() == Board.MAX_NUMBER_OF_LINES	
 	}
 }

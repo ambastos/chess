@@ -56,6 +56,28 @@ class BoardMovement {
 		board.lastPressedKey = pressedKey
 		
 	}
+	
+	def updateListOfMovements(content, currentPosition, finalPosition) {
+		if (content.isWhite())
+			board.lastMoveNumber += 1
+			def currentMoveNumber = board.lastMoveNumber
+			
+			def movesFromNumber = board.moves.get(currentMoveNumber)
+			if (board.moves.containsKey(currentMoveNumber)) {
+				movesFromNumber = board.moves.get(currentMoveNumber)
+			}else {
+				movesFromNumber = []
+			}
+		
+		def moveListObject = new MoveListObject(content,currentPosition, finalPosition)
+		if (content.isWhite()) {
+			movesFromNumber.add(moveListObject)
+			board.moves.put(currentMoveNumber, movesFromNumber)
+		} else if (content.isBlack()) {
+			movesFromNumber.add(moveListObject)
+		}
+	}
+	
 
 	private moveGrabedPiece() {
 		def oldCordinate = board.squareWithGrabedPiece.cordinate
@@ -138,4 +160,22 @@ class BoardMovement {
 	def getLShape(initialSquareCordinate) {
 		lShape.getLShape(initialSquareCordinate)
 	}
+	
+	private class MoveListObject {
+		
+		def content
+		def currentPosition
+		def finalPosition
+		 MoveListObject(content, currentPosition,finalPosition)  {
+			 this.content  =content
+			 this.currentPosition =currentPosition
+			 this.finalPosition = finalPosition
+		}
+		 
+		@Override
+		public String toString() {
+			(content.isNotAPawn() ? content.IDENTIT : "" )+ currentPosition+"-"+finalPosition
+		}
+	}
+
 }

@@ -182,4 +182,92 @@ class KingMovementTest extends TestPieceMovement {
 		board.movePiece(BLACK_KING, "F7", "E8")
 		
 	}
+	
+	@Test
+	void devePermitirFazerORockDasBrancas() {
+		board.initializeWithInitialPosition()
+		board.movePiece(WHITE_PAWN, "E2", "E4")
+		board.movePiece(BLACK_PAWN, "E7", "E5")
+		board.movePiece(new Bishop(WHITE), "F1", "E2")
+		board.movePiece(BLACK_PAWN, "F7", "F5")
+		board.movePiece(new Knight(WHITE), "G1", "F3")
+		board.movePiece(BLACK_PAWN, "D7", "D5")
+		try {
+			board.movePiece(new King(WHITE), "E1", "G1")//ROCK deve funcionar
+			assert true == true
+		}catch(e) {
+			fail("Nao devia dar erro ao rocar")
+		}
+	}
+	
+	
+	@Test
+	void devePermitirFazerORockLongoDasNegras() {
+		board.initializeWithInitialPosition()
+		board.movePiece(WHITE_PAWN, "E2", "E4")
+		board.movePiece(BLACK_PAWN, "D7", "D5")
+		board.movePiece(new Bishop(WHITE), "F1", "E2")
+		board.movePiece(new Bishop(BLACK), "C8", "F5")
+		board.movePiece(new Knight(WHITE), "G1", "F3")
+		board.movePiece(new Queen(BLACK), "D8", "D7")
+		board.movePiece(new King(WHITE), "E1", "G1")//Roque das brancas
+		try {
+			board.movePiece(new King(BLACK), "E8", "C8")//Roque deve funcionar
+			def squareOfCastle = board.getSquaresBetweenCordinates("D8", "C8")
+			
+			assert true == squareOfCastle[0].content.isRock()
+			assert true == squareOfCastle[1].content.isKing()
+		}catch(e) {
+			fail("Nao devia dar erro ao rocar")
+		}
+	}
+	
+	@Test
+	void naoDevePermitirFazerORockDasBrancasPoisOReiJaSeMoveu() {
+		board.initializeWithInitialPosition()
+		board.movePiece(WHITE_PAWN, "E2", "E4")
+		board.movePiece(BLACK_PAWN, "E7", "E5")
+		board.movePiece(new Knight(WHITE), "G1", "F3")
+		board.movePiece(BLACK_PAWN, "F7", "F5")
+		board.movePiece(new Bishop(WHITE), "F1", "C4")
+		board.movePiece(new King(WHITE), "E1", "E2")
+		board.movePiece(new King(WHITE), "E2", "E1")
+		try {
+			board.movePiece(new King(WHITE), "E1", "G1")//ROCK nao deve funcionar
+			fail()
+		}catch(e) {
+			assert "Não é possível realizar o roque porque o rei ou a torre já se moveram." == e.message
+		}
+	}
+	@Test
+	void naoDevePermitirFazerORockDasBrancasPoisATorreJaSeMoveu() {
+		board.initializeWithInitialPosition()
+		board.movePiece(WHITE_PAWN, "E2", "E4")
+		board.movePiece(BLACK_PAWN, "E7", "E5")
+		board.movePiece(new Knight(WHITE), "G1", "F3")
+		board.movePiece(BLACK_PAWN, "F7", "F5")
+		board.movePiece(new Bishop(WHITE), "F1", "C4")
+		board.movePiece(new Rock(WHITE), "H1", "G1")
+		board.movePiece(new Rock(WHITE), "G1", "H1")
+		try {
+			board.movePiece(new King(WHITE), "E1", "G1")//Roque nao deve funcionar
+			fail()
+		}catch(e) {
+			assert "Não é possível realizar o roque porque o rei ou a torre já se moveram." == e.message
+		}
+	}
+	@Test
+	void naoDevePermitirFazerORockDasBrancasDevidoAoBispoAFrente() {
+		board.initializeWithInitialPosition()
+		board.movePiece(WHITE_PAWN, "E2", "E4")
+		board.movePiece(BLACK_PAWN, "E7", "E5")
+		board.movePiece(new Knight(WHITE), "G1", "F3")
+		board.movePiece(BLACK_PAWN, "F7", "F5")
+		try {
+			board.movePiece(new King(WHITE), "E1", "G1")//ROCK nao deve funcionar
+			fail()
+		}catch(e) {
+			assert "Não é possível realizar o roque das brancas devido a presença da peça Bispo BW em F1." == e.message
+		}
+	}
 }

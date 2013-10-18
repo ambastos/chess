@@ -1,13 +1,15 @@
 package meu.chess.pieces
 
-import static meu.chess.Board.*;
+import static meu.chess.Board.*
 import meu.chess.MovimentoInvalidoException
 
 
 class Piece {
 	
 	public final static EMPTY_PIECE = "  "
+	static final NULL_PIECE = new NullPiece()
 	
+	def IDENTIT = ""
 	def simbol = EMPTY_PIECE
 	def currentSquare
 	def color
@@ -56,5 +58,16 @@ class Piece {
 	
 	def isPawn(color) {
 		(this instanceof Pawn) && this?.color == color
+	}
+	def isNotAPawn() {
+		!(this instanceof Pawn)
+	}
+	
+	def isKing() {
+		(this instanceof King)
+	}
+	
+	def isRock() {
+		this instanceof Rock
 	}
 }

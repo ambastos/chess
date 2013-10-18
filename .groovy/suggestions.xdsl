@@ -1,23 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <projectSuggestions>
-<declaringtype type="meu.chess.pieces.Pawn$PawnPossibleMoves">
-<property isActive="true" isStatic="false" name="square" type="java.lang.String">
-<doc/>
-</property>
-</declaringtype>
-<declaringtype type="java.lang.Object">
-<property isActive="true" isStatic="false" name="piece" type="java.lang.Object">
-<doc/>
-</property>
-</declaringtype>
-<declaringtype type="meu.chess.Board">
-<method isActive="true" isStatic="false" name="inicializar" type="java.lang.String">
-<parameters useNamedArguments="false"/>
-<doc/>
-</method>
-<method isActive="true" isStatic="false" name="initializeWithInicialPosition" type="java.lang.String">
-<parameters useNamedArguments="false"/>
-<doc/>
-</method>
-</declaringtype>
+
 </projectSuggestions>

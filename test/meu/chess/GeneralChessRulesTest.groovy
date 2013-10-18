@@ -8,6 +8,7 @@ import meu.chess.pieces.King
 import meu.chess.pieces.Knight
 import meu.chess.pieces.Pawn
 import meu.chess.pieces.Queen
+import meu.chess.pieces.Rock
 
 import org.junit.Before
 import org.junit.Test
@@ -37,7 +38,6 @@ class GeneralChessRulesTest {
 			board.movePiece(WHITE_PAWN, "A2", "A4")
 			board.movePiece(new Queen(BLACK), "D5", "E5")
 			board.movePiece(WHITE_PAWN, "F2", "F4")
-			print board.draw()
 			fail()
 		} catch (Exception e) {
 			assertEquals "Não é possível mover a peça Peão (PW) de F2 para F4 enquanto o rei em E1 se encontra em xeque.", e.message
@@ -102,7 +102,7 @@ class GeneralChessRulesTest {
 			board.movePiece(new King(BLACK), "E8", "F7")
 			fail()
 		} catch (Exception e) {
-			assert "Não é possível mover o rei para a casa F7 pois ele está em xeque." == e.message
+			assert "Não é possível mover o rei para a casa F7 pois ela está em xeque." == e.message
 		}
 	}
 	
@@ -126,10 +126,7 @@ class GeneralChessRulesTest {
 	void naoDevePermitirMoverOCavaloDeB8SeOReiEstiverEmXeque() {
 		
 		board.initializeWithInitialPosition()
-		
-		
 		try {
-			
 			board.movePiece(WHITE_PAWN, "E2", "E4")
 			board.movePiece(BLACK_PAWN, "E7", "E5")
 			board.movePiece(new Queen(WHITE), "D1", "H5")
@@ -156,6 +153,24 @@ class GeneralChessRulesTest {
 			assert true == true
 		} catch (Exception e) {
 			fail("Não era para ser xeque")
+		}
+	}
+	
+	@Test
+	void xequeVerticalDoReiNegroEmE5DevidoADamaEmE5() {
+		board.initializeWithInitialPosition()
+		try {
+			board.movePiece(WHITE_PAWN, "E2", "E4")
+			board.movePiece(BLACK_PAWN, "D7", "D6")
+			board.movePiece(new Queen(WHITE), "D1", "E2")
+			board.movePiece(new Queen(WHITE), "E2", "D3")
+			board.movePiece(new King(BLACK), "E8", "D7")
+			board.movePiece(new King(BLACK), "D7", "E6")
+			board.movePiece(new Queen(WHITE), "D3", "D5")
+			board.movePiece(new King(BLACK), "E6", "E5")//Casa E5 está coberta pela dama
+			fail()
+		} catch (e) {
+			assert "Não é possível mover o rei para a casa E5 pois ela está em xeque." == e.message 
 		}
 	}
 	
@@ -245,7 +260,7 @@ class GeneralChessRulesTest {
 			board.movePiece(new King(BLACK), "E8", "F7")//Xeque
 			fail()
 		} catch (e) {
-			assert "Não é possível mover o rei para a casa F7 pois ele está em xeque." == e.message
+			assert "Não é possível mover o rei para a casa F7 pois ela está em xeque." == e.message
 		}
 	}
 	
@@ -263,5 +278,44 @@ class GeneralChessRulesTest {
 			fail("Não pode ser xeque.")
 		}
 	}
+	
+	@Test
+	void naoDevePermitirMoverOPeaoEmF7SeOReiForFicarEmXeque() {
+		board.initializeWithInitialPosition()
+		board.setApplication(true)
+		try {
+			board.movePiece(WHITE_PAWN, "E2", "E4")
+			board.movePiece(BLACK_PAWN, "E7", "E5")
+			board.movePiece(new Queen(WHITE), "D1", "H5")//Possível Xeque
+			board.movePiece(BLACK_PAWN, "F7", "F5")//Deixou o rei em xeque
+			fail()
+		} catch (e) {
+			assert "Não é possível mover a peça Peão (PB) de F7 para F5 enquanto o rei em E8 se encontra em xeque." == e.message
+		}
+	}
+	
+	@Test
+	void BUGdevePermitirOReiEmE5CapturaATorreQueLheDaXequeEmE4() {
+		
+		board.initialize(["E5":new King(BLACK), "D4":new Rock(WHITE), "A1":new King(WHITE)])
+		board.movePiece(new Rock(WHITE), "D4", "E4")//Xeque
+		try {
+			board.movePiece(new King(BLACK), "E5", "E4")//Toma a torre que lhe dá cheque
+			assert true== true
+		} catch (Exception e) {
+			fail("Não deve considerar xeque ao capturar a torre inimiga")
+		}
+		
+	}
+	
+	@Test
+	void BUGdevePermitirOReiEmD2MoverSeParaC3ParaLivrarSeDoXequeDeDamaEmF2() {
+		
+		board.initialize(["D2":new King(WHITE), "F2":new Queen(BLACK)])
+		board.movePiece(new King(WHITE), "D2", "C3")
+		print board.draw()
+		assert true == true
+	}
+	
 	
 }
