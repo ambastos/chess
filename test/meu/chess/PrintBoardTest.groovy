@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.plaf.multi.MultiSeparatorUI;
 
 import meu.chess.pieces.Bishop
+import meu.chess.pieces.King
 import meu.chess.pieces.Knight
 import meu.chess.pieces.NullPiece;
 import meu.chess.pieces.Pawn
@@ -706,6 +707,29 @@ class PrintBoardTest   {
 		
 		 
 		fail("Esse teste esta falhando")
+	}
+	
+	@Test
+	void aoTomarOPeaoF7ComADamaProtegidaPeloCavaloOReiNegroNaoPodeTomarADamaEJogoTerminaEmXequeMate() {
+		
+		board.initializeWithInitialPosition()
+		board.setApplication(true)
+		board.movePiece(WHITE_PAWN, "E2", "E4")
+		board.movePiece(BLACK_PAWN, "E7", "E5")
+		board.movePiece(new Queen(WHITE), "D1", "H5")
+		board.movePiece(BLACK_PAWN, "A7", "A5")
+		board.movePiece(new Knight(WHITE), "G1", "F3")
+		board.movePiece(new Bishop(BLACK), "F8", "D6")
+		board.movePiece(new Knight(WHITE), "F3", "G5")
+		board.movePiece(new Knight(BLACK), "G8", "F6")
+		board.movePiece(new King(BLACK), "E8", "G8")
+		board.movePiece(new Queen(WHITE), "H5", "F7")//Xeque mate
+		try {
+			board.movePiece(new King(BLACK), "G8", "F7")//Tenta tomar a dama mas não pode funcionar pois a dama está protegida pelo cavalo
+			fail("Esse teste esta falhando")
+		} catch (e) {
+			assert "Não é possível mover o rei para a casa F7 pois ela está em xeque." == e.message
+		}
 	}
 	
 	@Test

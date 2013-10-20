@@ -24,12 +24,23 @@ public class BoardFactory {
 	public void movePiece(Piece content, def currentPosition, def finalPosition) {
 
 		def square = board.squares.get(currentPosition)
+		def originalPiece = square.content
 		def finalSquare = board.squares.get(finalPosition)
-		updateTemporallySquaresContent(currentPosition, finalPosition, content)
-		verifyIfMovementIsValid(content, currentPosition, finalPosition, square)
+		updateTemporallySquaresContent(currentPosition, finalPosition, originalPiece)
+		verifyIfMovementIsValid(originalPiece, currentPosition, finalPosition, square)
 		
-		updateFinalSquareIfEnPassant(content, square, finalPosition)
+		updateFinalSquareIfEnPassant(originalPiece, square, finalPosition)
 		
+		if (originalPiece.isKing() ) {
+			def castle = originalPiece.getCastle(square, finalSquare)
+			if (castle.isCastle()) {
+				Square squareForRock = castle.getNewSquareForRock()
+				Square previousSquareRock = castle.getRock().currentSquare
+				
+				squareForRock.update(squareForRock.cordinate, castle.getRock())
+				previousSquareRock.update(previousSquareRock.cordinate, Piece.NULL_PIECE)
+			}
+		}
 		
 		board.applyChangesOnSquares()
 		board.updateListOfMovements(finalSquare.content, currentPosition, finalPosition)

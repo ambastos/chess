@@ -1,10 +1,10 @@
 package meu.chess.pieces;
 
-import static meu.chess.Board.*;
-import static org.junit.Assert.*;
-import meu.chess.MovimentoInvalidoException;
+import static meu.chess.Board.*
+import static org.junit.Assert.*
+import meu.chess.MovimentoInvalidoException
 
-import org.junit.Test;
+import org.junit.Test
 
 class KingMovementTest extends TestPieceMovement {
 
@@ -211,6 +211,7 @@ class KingMovementTest extends TestPieceMovement {
 		board.movePiece(new Knight(WHITE), "G1", "F3")
 		board.movePiece(new Queen(BLACK), "D8", "D7")
 		board.movePiece(new King(WHITE), "E1", "G1")//Roque das brancas
+		board.movePiece(new Knight(BLACK), "B8", "C6")
 		try {
 			board.movePiece(new King(BLACK), "E8", "C8")//Roque deve funcionar
 			def squareOfCastle = board.getSquaresBetweenCordinates("D8", "C8")

@@ -90,7 +90,8 @@ protected class Atack {
 	   
 	   def diagonals = board.getDiagonals(square.cordinate)
 	   for (objDiagonal in diagonals) {
-		   for (cordinatesFromSource in objDiagonal.value.cordinatesFromSource()) {
+		   def squaresFromSource = objDiagonal.value.cordinatesFromSource()
+		   for (cordinatesFromSource in squaresFromSource) {
 			   for (currentSquare in cordinatesFromSource.value) {
 				   
 				   if (isThereAPieceOfSameColorInThisSquare(currentSquare, square, color))
@@ -123,9 +124,6 @@ protected class Atack {
 	   
 	   def LShape = board.getLShape(square.cordinate)
 	   for (currentSquare in LShape) {
-		   if (isThereAPieceOfSameColorInThisSquare(currentSquare, square, color))
-			   break
-		   
 		   if (isByKnight(currentSquare, color))
 			   return true
 	   }
