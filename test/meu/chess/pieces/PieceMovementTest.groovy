@@ -59,7 +59,7 @@ class PieceMovementTest extends TestPieceMovement {
 		board.initializeWithInitialPosition()
 		board.movePiece(new Pawn(WHITE), "A2", "A4") 
 		board.movePiece(new Pawn(BLACK), "A7", "A5")
-		board.movePiece(WHITE_ROCK, "A8", "A6")	//A peça em A81 é uma torre Negra
+		board.movePiece(WHITE_ROCK, "A8", "A6")	//A peça em A8 é uma torre Negra
 	}
 	
 }
