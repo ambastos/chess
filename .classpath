@@ -8,6 +8,5 @@
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="Chesspresso-lib.jar" sourcepath="Chesspresso-lib-0.9.2"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

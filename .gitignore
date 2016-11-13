@@ -2,5 +2,8 @@
 /target
 .grooyy
 .settings
+.classpath
+.gitignore
+.project
 Chesspresso-lib-0.9.2
 Chesspresso-lib.jar
