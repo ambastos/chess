@@ -12,8 +12,6 @@ import meu.chess.pieces.Piece;
 import org.junit.Before;
 import org.junit.Test;
 
-
-
 class PrintBoardTest   {
 	
 	Board board
@@ -486,25 +484,27 @@ class PrintBoardTest   {
 	void deveRetornarAsPossiveisDiagonaisDaCasaE5() {
 		
 		board.initializeWithInitialPosition()
+		//SENTIDO ANTIHORARIO PARTINDO DA ESQUERDA
 		def diagonals = board.getDiagonals("E5")
 		
-		assert 2 == diagonals.size()
-		assert "A1" == diagonals[1].diagonal[0].cordinate 
-		assert "B2" == diagonals[1].diagonal[1].cordinate
-		assert "C3" == diagonals[1].diagonal[2].cordinate
-		assert "D4" == diagonals[1].diagonal[3].cordinate
-		assert "E5" == diagonals[1].diagonal[4].cordinate
-		assert "F6" == diagonals[1].diagonal[5].cordinate
-		assert "G7" == diagonals[1].diagonal[6].cordinate
-		assert "H8" == diagonals[1].diagonal[7].cordinate
+		assert 4 == diagonals.size()
+		assert "D4" == diagonals[1].square[0].cordinate 
+		assert "C3" == diagonals[1].square[1].cordinate
+		assert "B2" == diagonals[1].square[2].cordinate
+		assert "A1" == diagonals[1].square[3].cordinate
 		
-		assert "B8" == diagonals[2].diagonal[0].cordinate
-		assert "C7" == diagonals[2].diagonal[1].cordinate
-		assert "D6" == diagonals[2].diagonal[2].cordinate
-		assert "E5" == diagonals[2].diagonal[3].cordinate
-		assert "F4" == diagonals[2].diagonal[4].cordinate
-		assert "G3" == diagonals[2].diagonal[5].cordinate
-		assert "H2" == diagonals[2].diagonal[6].cordinate
+		assert "D6" == diagonals[2].square[0].cordinate
+		assert "C7" == diagonals[2].square[1].cordinate
+		assert "B8" == diagonals[2].square[2].cordinate
+		
+		assert "F6" == diagonals[3].square[0].cordinate		
+		assert "G7" == diagonals[3].square[1].cordinate
+		assert "H8" == diagonals[3].square[2].cordinate
+		
+		assert "F4" == diagonals[4].square[0].cordinate
+		assert "G3" == diagonals[4].square[1].cordinate
+		assert "H2" == diagonals[4].square[2].cordinate
+		
 		
 	}
 	
@@ -514,12 +514,11 @@ class PrintBoardTest   {
 		board.initializeWithInitialPosition()
 		def diagonals = board.getDiagonals("E5")
 		
-		assert 2 == diagonals.size()
-		assert ["D4","C3", "B2", "A1"] == diagonals[1].cordinatesFromSource()[1]
-		assert ["F6","G7", "H8"] == diagonals[1].cordinatesFromSource()[2]
-		
-		assert ["D6","C7", "B8"] == diagonals[2].cordinatesFromSource()[1]
-		assert ["F4","G3", "H2"] == diagonals[2].cordinatesFromSource()[2]
+		assert 4 == diagonals.size() 
+		assert ["D4","C3", "B2", "A1"] == diagonals[1].cordinatesFromSource()
+		assert ["D6","C7", "B8"] == diagonals[2].cordinatesFromSource()
+		assert ["F6","G7", "H8"] == diagonals[3].cordinatesFromSource()
+		assert ["F4","G3", "H2"] == diagonals[4].cordinatesFromSource()
 		
 		
 	}
@@ -529,10 +528,8 @@ class PrintBoardTest   {
 		
 		board.initializeWithInitialPosition()
 		def diagonals = board.getDiagonals("E8")
-		
-		assert 2 == diagonals[1].cordinatesFromSource().size()
-		assert ["D7","C6", "B5", "A4"] == diagonals[1].cordinatesFromSource()[1]
-		assert ["F7","G6", "H5"] == diagonals[1].cordinatesFromSource()[2]
+		assert ["D7","C6", "B5", "A4"] == diagonals[1].cordinatesFromSource()
+		assert ["F7","G6", "H5"] == diagonals[2].cordinatesFromSource()
 		
 		
 	}
@@ -562,6 +559,24 @@ class PrintBoardTest   {
 	}
 	
 	@Test
+	void retornaAUnicaDiagonalDeH8() {
+		board.initializeWithInitialPosition()
+		
+		def diagonals = board.getDiagonals("H8")
+		assert diagonals.size() == 1
+		assert ["G7","F6","E5","D4","C3","B2","A1"] == diagonals[1].cordinatesFromSource()
+	}
+	
+	@Test
+	void retornaAUnicaDiagonalDeA1() {
+		board.initializeWithInitialPosition()
+		
+		def diagonals = board.getDiagonals("A1")
+		assert diagonals.size() == 1
+		assert ["B2","C3","D4","E5","F6","G7", "H8"] == diagonals[1].cordinatesFromSource()
+	}
+	
+	@Test
 	void deveRetornarAsCasasDaHorizontalA1A4() {
 		board.initializeWithInitialPosition()
 		
@@ -584,7 +599,7 @@ class PrintBoardTest   {
 	}
 	
 	@Test
-	void deveRetornarAsCasasDaVertiacalH1H3() {
+	void deveRetornarAsCasasDaVerticalH1H3() {
 		board.initializeWithInitialPosition()
 		
 		def vertical = board.getVertical("H1", "H3")
@@ -655,5 +670,67 @@ class PrintBoardTest   {
 		assertEquals  "G7", LSquares[2].cordinate
 		assertEquals  "F6", LSquares[3].cordinate
 		assertEquals 4, LSquares.size()
+	}
+	
+	@Test
+	void deveRetornarOCursorAoNormalSempreQueHourveErro() {
+		board.setApplication(true)
+		board.initializeWithInitialPosition()
+		board.cursorCordinate = "E2"
+		
+		try {
+			board.draw(KeyEvent.VK_SPACE)
+			board.draw(KeyEvent.VK_UP)
+			board.draw(KeyEvent.VK_UP)
+			board.draw(KeyEvent.VK_UP)
+			board.draw(KeyEvent.VK_UP)
+			board.draw(KeyEvent.VK_SPACE)
+		}catch(e) {
+			assertEquals " ___ ___ ___ ___ ___ ___ ___ ___ \n"+
+			"|RB |NB*|BB |QB*|KB |BB*|NB |RB*|\n"+
+			"|___|___|___|___|___|___|___|___|\n"+
+			"|PB*|PB |PB*|PB |PB*|PB |PB*|PB |\n"+
+			"|___|___|___|___|___|___|___|___|\n"+
+			"|   |  *|   |  *|   |  *|   |  *|\n"+
+			"|___|___|___|___|___|___|___|___|\n"+
+			"|  *|   |  *|   |  *|   |  *|   |\n"+
+			"|___|___|___|___|___|___|___|___|\n"+
+			"|   |  *|   |  *|   |  *|   |  *|\n"+
+			"|___|___|___|___|___|___|___|___|\n"+
+			"|  *|   |  *|   |  *|   |  *|   |\n"+
+			"|___|___|___|___|___|___|___|___|\n"+
+			"|PW |PW*|PW |PW*|PW |PW*|PW |PW*|\n"+
+			"|___|___|___|___|[_]|___|___|___|\n"+
+			"|RW*|NW |BW*|QW |KW*|BW |NW*|RW |\n"+
+			"|___|___|___|___|___|___|___|___|",
+			board.draw()
+		}
+	} 
+	
+	@Test
+	void verificaOCursorXQuandoMarcadoUmaPeao() {
+		
+		board.setApplication(true)
+		board.initializeWithInitialPosition()
+		board.cursorCordinate = "E2"
+		board.draw(KeyEvent.VK_SPACE)
+		assertEquals " ___ ___ ___ ___ ___ ___ ___ ___ \n"+
+		"|RB |NB*|BB |QB*|KB |BB*|NB |RB*|\n"+
+		"|___|___|___|___|___|___|___|___|\n"+
+		"|PB*|PB |PB*|PB |PB*|PB |PB*|PB |\n"+
+		"|___|___|___|___|___|___|___|___|\n"+
+		"|   |  *|   |  *|   |  *|   |  *|\n"+
+		"|___|___|___|___|___|___|___|___|\n"+
+		"|  *|   |  *|   |  *|   |  *|   |\n"+
+		"|___|___|___|___|___|___|___|___|\n"+
+		"|   |  *|   |  *|   |  *|   |  *|\n"+
+		"|___|___|___|___|___|___|___|___|\n"+
+		"|  *|   |  *|   |  *|   |  *|   |\n"+
+		"|___|___|___|___|___|___|___|___|\n"+
+		"|PW |PW*|PW |PW*|PW |PW*|PW |PW*|\n"+
+		"|___|___|___|___|[X]|___|___|___|\n"+
+		"|RW*|NW |BW*|QW |KW*|BW |NW*|RW |\n"+
+		"|___|___|___|___|___|___|___|___|",
+		board.draw()
 	}
 }

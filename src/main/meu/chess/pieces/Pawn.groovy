@@ -26,7 +26,7 @@ class Pawn extends Piece implements ValidPiece {
 	
 	def movesValidator(color, square, newPosition) {
 		def colorOfOlderSquare = color
-		def columnOfOldeSquare = square.column
+		def columnOfOlderSquare = square.column
 		def lineOfOlderSquare = square.line			
 		def columnOfNewerSquare = getColumnFromCordinate(newPosition);
 		def lineOfNewerSquare = getLineFromCordinate(newPosition);			
@@ -81,7 +81,8 @@ class Pawn extends Piece implements ValidPiece {
 		
 		def isCatchable = {
 			 
-			if (!(pieceOfNewSquare instanceof NullPiece) && pieceOfNewSquare.color != colorOfOlderSquare ) {
+			def isPossibleToCapture = !(pieceOfNewSquare instanceof NullPiece) && pieceOfNewSquare.color != colorOfOlderSquare
+			if (isPossibleToCapture ) {
 				def isOneColumnBeside = ( abs( newSquare.columnNumber - square.columnNumber) == 1 )
 				def isOneLineAhead = ( newSquare.line - square.line ) == 1
 				if (isBlack()) {
@@ -90,33 +91,28 @@ class Pawn extends Piece implements ValidPiece {
 				
 				if ( isOneColumnBeside && isOneLineAhead ) {
 					return true
+				}else {
+					throw new MovimentoInvalidoException("Movimento inválido para o peão em $square.cordinate.")
 				}
-					
-			}else {
-				return true
 			}
 			return false
 		}
 		
-		def validMovement = {  
+		def validMovement = { columOlder, columNewer ->
 			if (!isInitialLineForPawns) {
 				throw new MovimentoInvalidoException("Linha inicial para o peão é inválida.")
 			}
-				
-			if (!isCatchable()) {
-				throw new MovimentoInvalidoException("Movimento inválido para o peão em $square.cordinate.")				
-				
-			} else {
-				
-				possibleLines = fillPossibilities()
-				
-				if (!possibleLines.contains(lineOfNewerSquare) ) {
-					throw new MovimentoInvalidoException("Movimento inválido para o peão.")
-				}
+			
+			if (isCatchable()) 
+				return
+			possibleLines = fillPossibilities()
+		
+			if ( (!possibleLines.contains(lineOfNewerSquare)) || (columOlder != columNewer) ) {
+				throw new MovimentoInvalidoException("Movimento inválido para o peão.")
 			}
 		}
 		
-		validMovement()
+		validMovement(columnOfOlderSquare, columnOfNewerSquare)
 	}
 	
 	@Override

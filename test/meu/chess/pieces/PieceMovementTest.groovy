@@ -21,7 +21,8 @@ class PieceMovementTest extends TestPieceMovement {
 	@Test
 	public void naoDevePermitirUmMovimentoDePecaAlemDasCordendasDeLinha() {
 		
-		board.initializeWithInitialPosition()
+		def pieces = ["A1": WHITE_ROCK]
+		board.initialize(pieces)
 		
 		try {
 			board.movePiece(WHITE_ROCK, "A1", "A9")
@@ -32,17 +33,13 @@ class PieceMovementTest extends TestPieceMovement {
 		
 	}
 	
-	@Test
+	@Test(expected=Exception.class)
 	public void naoDevePermitirUmMovimentoDePecaAlemDasCordendasDeColuna() {
 		
-		board.initializeWithInitialPosition()
+		def pieces = ["A1": WHITE_ROCK]
+		board.initialize(pieces)
 		
-		try {
-			board.movePiece(WHITE_ROCK, "A1", "I1")
-			fail()
-		} catch (Exception e) {
-			assertEquals "A casa de destino I1 é inválida.", e.message
-		}
+		board.movePiece(WHITE_ROCK, "A1", "I1")
 		
 	}
 	

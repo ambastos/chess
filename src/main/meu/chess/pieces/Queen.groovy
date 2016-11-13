@@ -41,14 +41,4 @@ class Queen extends Piece implements ValidPiece {
 			}
 		}		
 	}
-
-	private validMovementsOnSquares(square, squares) {
-		for (currentSquare in squares) {
-			if (currentSquare == square || currentSquare == null)
-				continue
-			if (currentSquare.content != square.content && currentSquare.hasPieceOfSameColor(square.content) ) {
-				throw new MovimentoInvalidoException("Movimento da rainha inválido devido a presença do $currentSquare.content.description em $currentSquare.cordinate.")
-			}
-		}
-	}
 }

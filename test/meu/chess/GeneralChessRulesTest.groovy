@@ -36,7 +36,6 @@ class GeneralChessRulesTest {
 			board.movePiece(new Queen(BLACK), "D8", "D5")
 			board.movePiece(WHITE_PAWN, "A2", "A4")
 			board.movePiece(new Queen(BLACK), "D5", "E5")
-			
 			board.movePiece(WHITE_PAWN, "F2", "F4")
 			fail()
 		} catch (Exception e) {
@@ -54,13 +53,12 @@ class GeneralChessRulesTest {
 			board.movePiece(WHITE_PAWN, "E2", "E4")
 			board.movePiece(BLACK_PAWN, "D7", "D5")
 			board.movePiece(WHITE_PAWN, "E4", "D5")
-			board.movePiece(BLACK_PAWN, "H7", "H5")
+			board.movePiece(BLACK_PAWN, "E7", "E6")
 			board.movePiece(new Queen(WHITE), "D1", "E2")
-			
-			board.movePiece(BLACK_PAWN, "F7", "F5")
+			board.movePiece(BLACK_PAWN, "E6", "D5")
 			fail()
 		} catch (Exception e) {
-			assertEquals "Não é possível mover a peça Peão (PB) de F7 para F5 enquanto o rei em E8 se encontra em xeque.", e.message
+			assertEquals "Não é possível mover a peça Peão (PB) de E6 para D5 enquanto o rei em E8 se encontra em xeque.", e.message
 		}
 	}
 	
@@ -100,7 +98,7 @@ class GeneralChessRulesTest {
 			board.movePiece(new King(BLACK), "E8", "F7")
 			fail()
 		} catch (Exception e) {
-			assert "Não é possível mover o rei para a casa F7 pois ela está em xeque." == e.message
+			assert "Não é possível mover a peça Rei de E8 de E8 para F7 enquanto o rei em E8 se encontra em xeque." == e.message
 		}
 	}
 	
@@ -124,7 +122,7 @@ class GeneralChessRulesTest {
 	void naoDevePermitirMoverOCavaloDeB8SeOReiEstiverEmXeque() {
 		
 		board.initializeWithInitialPosition()
-		
+		board.application = true
 		
 		try {
 			
@@ -134,7 +132,6 @@ class GeneralChessRulesTest {
 			board.movePiece(BLACK_PAWN, "A7", "A6")
 			board.movePiece(new Queen(WHITE), "H5", "F7")//Xeque
 			board.movePiece(new Knight(BLACK), "B8", "C6")
-			
 			fail()
 		} catch (Exception e) {
 			assert "Não é possível mover a peça Cavalo NB de B8 para C6 enquanto o rei em E8 se encontra em xeque." == e.message
@@ -142,9 +139,26 @@ class GeneralChessRulesTest {
 	}
 	
 	@Test
+	void naoDeveConsideraXequeSeHouverUmaPecaDeMesmaCorEntreOAtacanteEOReiNegro() {
+		try {
+			board.initializeWithInitialPosition()
+			board.application = true
+			
+			
+			board.movePiece(WHITE_PAWN, "E2", "E4")
+			board.movePiece(BLACK_PAWN, "E7", "E5")
+			board.movePiece(new Bishop(WHITE), "F1", "B5")
+			board.movePiece(BLACK_PAWN, "F7", "F6")
+		}catch(e) {
+			fail()
+		}
+	}
+	
+	
+	@Test
 	void naoDeveConsiderarXequeVerticalSeHouverUmaPecaDaPropriaCorEntreAPecaAtacanteEORei() {
 		
-		board.movePiece(WHITE_PAWN, "E2", "E4")
+		fail("Não implementado")
 	}
 	
 	@Test
@@ -153,8 +167,49 @@ class GeneralChessRulesTest {
 	}
 	
 	@Test
-	void deveLancarUmErroSeARainhaDeC5EstiverDandoXequeNoReiEmE7() {
-		fail("Não implementado")
+	void devePermitirTomarAPecaQueAtacaORei() {
+		
+		def pieces = ["G6": new Knight(WHITE), 
+					  "E7": new King(BLACK),
+					  "H7": new Pawn(BLACK)
+					 ]
+		board.application = true
+		board.initialize(pieces)
+		board.color = BLACK
+		try {
+			board.movePiece(new Pawn(BLACK), "H7", "G6")
+		}catch(e) {
+			fail("Falhou ao tentar tomar a peça")
+		}
+		
+	}
+	
+	@Test 
+	void naoDevePermitirJogarQuandoOReiForAtacadoPorUmCavalo() {
+
+		def pieces = ["E5": new Knight(WHITE), "E8": new King(BLACK)]		
+		board.application = true
+		board.initialize(pieces)
+		board.color = BLACK
+		try {
+			board.movePiece(new King(BLACK), "E8", "F7")
+		}catch(e) {
+			assertEquals  "Não é possível mover a peça Rei de E8 de E8 para F7 enquanto o rei em E8 se encontra em xeque." , e.message
+		}	
+		
+	}
+	
+	@Test ()
+	void naoDeveLancarUmErroSeARainhaDeF7EstiverDandoXequeNoReiEmE8() {
+		def pieces = ["F7": new Queen(WHITE), "E8": new King(BLACK)]
+		board.color = BLACK 
+		board.setApplication(true)
+		board.initialize(pieces)
+		try {
+			board.movePiece(new King(BLACK), "E8", "F7")
+		}catch(e) {
+			fail()
+		}	
 	}
 	
 	@Test
@@ -163,12 +218,69 @@ class GeneralChessRulesTest {
 	}
 	
 	@Test
-	void naoDeveConsiderarXequeSeOReiMoverSeParaUmCasaEmXequeMasForCaptura() {
-		fail("Não implementado")
+	void deveMudarAVezDoJogadorMesmoQuandoHouverXeque_ERRO() {
+		board.application = true
+		board.initializeWithInitialPosition()
+		
+		board.movePiece(WHITE_PAWN, "E2", "E4")
+		board.movePiece(BLACK_PAWN, "E7", "E5")
+		board.movePiece(new Bishop(WHITE), "F1", "B5")
+		try {
+			//REI Ficaria em xeque
+			board.movePiece(BLACK_PAWN, "D7", "D5")
+		}catch(e) {
+			//Jogada valida
+			try {
+				assert board.color == BLACK
+				board.movePiece(BLACK_PAWN, "F7", "F5")
+			}catch(ee) {
+				fail()
+			}
+		}	
+		
 	}
 	
 	@Test
 	void naoDevePermitirMoverAMesmaCorDePecasDuasVezesSeguidasEmPartidaOficial() {
-		fail("Não implementado")
+		board.application = true
+		board.initializeWithInitialPosition()
+		
+		try {
+			board.movePiece(WHITE_PAWN, "E2", "E4")
+			board.movePiece(WHITE_PAWN, "D2", "D4")
+			fail()
+		}catch(e) {
+			assert "Não é a vez das branca(s)." == e.message
+		}
+		
+	}
+	
+	@Test
+	void naoDevePermitirMoverAMesmaCorDePecasDuasVezesSeguidasEmPartidaOficialNegras() {
+		board.initializeWithInitialPosition()
+		board.application = true
+		
+		try {
+			board.movePiece(WHITE_PAWN, "E2", "E4")
+			board.movePiece(BLACK_PAWN, "D7", "D5")
+			board.movePiece(BLACK_PAWN, "D5", "D4")
+			fail()
+		}catch(e) {
+			assert "Não é a vez das negra(s)." == e.message
+		}
+	}
+	
+	@Test
+	void naoDevePermitirAsNegrasIniciaremAPartida() {
+		
+		board.initializeWithInitialPosition()
+		board.application = true
+		
+		try {
+			board.movePiece(BLACK_PAWN, "D7", "D5")
+			fail()
+		}catch(e) {
+			assert "Não é a vez das negra(s)." == e.message
+		}
 	}
 }

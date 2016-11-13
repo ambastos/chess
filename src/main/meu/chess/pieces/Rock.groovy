@@ -33,17 +33,6 @@ class Rock extends Piece implements ValidPiece {
 				validMovementsOnSquares(square, vertical)
 			}
 		}
-		
-	}
-	
-	private validMovementsOnSquares(square, squares) {
-		for (currentSquare in squares) {
-			if (currentSquare == square || currentSquare == null)
-				continue
-			if (currentSquare.content != square.content && currentSquare.hasPieceOfSameColor(square.content) ) {
-				throw new MovimentoInvalidoException("Movimento da torre inválido devido a presença do $currentSquare.content.description em $currentSquare.cordinate.")
-			}
-		}
 	}
 
 	@Override

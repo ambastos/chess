@@ -41,6 +41,16 @@ class Piece {
 		throw new MovimentoInvalidoException("Deve-se implementar o método 'validMovement' para a peça se mover")
 		//Precisa ser implementado para funcionar
 	} 
+	
+	def validMovementsOnSquares(square, squares) {
+		for (currentSquare in squares) {
+			if (currentSquare == square || currentSquare == null)
+				continue
+			if (currentSquare.content != square.content && currentSquare.hasPieceOfSameColor(square.content) ) {
+				throw new MovimentoInvalidoException("Movimento da peça $description inválido devido a presença do $currentSquare.content.description em $currentSquare.cordinate.")
+			}
+		}
+	}
 
 	def isTheSameColorAndType(anotherPiece) {
 		this.simbol.equals(anotherPiece.simbol)
@@ -52,5 +62,13 @@ class Piece {
 	@Override
 	public String toString() {
 		return simbol;
+	}
+	
+	def isAKing() {
+		return (this instanceof King)
+	}
+	
+	def isARock() {
+		(this instanceof Rock)
 	}
 }

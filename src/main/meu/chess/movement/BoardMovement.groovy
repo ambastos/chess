@@ -5,6 +5,8 @@ import static meu.chess.utils.ConvertUtil.*
 import java.awt.event.KeyEvent;
 
 import meu.chess.Board;
+import meu.chess.Square
+import meu.chess.builder.BoardBuilder;
 class BoardMovement {
 
 	Board board
@@ -60,7 +62,14 @@ class BoardMovement {
 	private moveGrabedPiece() {
 		def oldCordinate = board.squareWithGrabedPiece.cordinate
 		def newCordinate = board.cursorCordinate
-		board.movePiece(board.squareWithGrabedPiece.content, oldCordinate, newCordinate)
+		
+		try {
+			board.movePiece(board.squareWithGrabedPiece.content, oldCordinate, newCordinate)
+		}catch (e) {
+			board.cursorCordinate = oldCordinate
+			board.squareWithGrabedPiece = null
+			throw e
+		}	
 		board.squareWithGrabedPiece = null
 	}
 
@@ -100,6 +109,15 @@ class BoardMovement {
 			}
 		}
 		squaresFromHorizontal
+	}
+	
+	def getLine(line) {
+		def squares = []
+		board.squares.each { map ->
+			if (map.value.line == line)
+				squares.add(map.value)
+		}
+		squares
 	}
 	
 	def getVertical(initialSquareCordinate, finalSquareCordinate) {

@@ -93,7 +93,7 @@ class BoardBuilder {
 			def currentCordinate = getColumnSimbolFromNumber(column)+line
 			if (column == 1) {
 				if (board.application && board.cursorCordinate == currentCordinate) {
-					if (board.selectPieceOnCursor) {
+					if (board.selectPieceOnCursor && board.squareWithGrabedPiece != null) {
 						strLine+= "|[X]|"
 					}else {
 						strLine+= "|[_]|"
@@ -104,9 +104,10 @@ class BoardBuilder {
 				}	
 			}else {
 				if (board.application && board.cursorCordinate == currentCordinate) {
-					strLine +="[_]|"
-					if (board.selectPieceOnCursor) {
+					if (board.selectPieceOnCursor && board.squareWithGrabedPiece != null) {
 						strLine+= "[X]|"
+					}else {
+						strLine +="[_]|"
 					}	
 				}else {
 					strLine +="___|"

@@ -29,13 +29,43 @@ class King extends Piece implements ValidPiece {
 		def numberOfMovedColumns = Math.abs(oldColumnNumber - newColumnNumber)
 		def numberOfMovedLine = Math.abs(oldLine - newLine)
 		
-		((numberOfMovedColumns == 1 || numberOfMovedColumns ==0) && (numberOfMovedLine == 1 || numberOfMovedLine == 0))  
+		//Possivelmente é rock então valida
+		
+		
+		if (isCastle(square,newCordinate))  {
+			return true		
+		}	
+		
+		return ((numberOfMovedColumns == 1 || numberOfMovedColumns ==0) && (numberOfMovedLine == 1 || numberOfMovedLine == 0))  
 	}
 	
+	def isCastle(square, newCordinate) {
+		
+		def oldColumnNumber =  square.columnNumber
+		def oldLine = square.line
+		def newColumnNumber =  getNumberOfColumnFromCordinate(newCordinate)
+		def newLine = getLineFromCordinate(newCordinate)
+		def numberOfMovedColumns = Math.abs(oldColumnNumber - newColumnNumber)
+		def numberOfMovedLine = Math.abs(oldLine - newLine)
+		
+		return Math.abs(getNumberOfMovedColumns(square,newCordinate)) >= 2 && numberOfMovedLine == 0
+	}
+	
+	def getNumberOfMovedColumns(square, newCordinate) {
+
+		def oldColumnNumber =  square.columnNumber
+		def oldLine = square.line
+		def newColumnNumber =  getNumberOfColumnFromCordinate(newCordinate)
+		def newLine = getLineFromCordinate(newCordinate)
+		def numberOfMovedColumns = oldColumnNumber - newColumnNumber
+		
+		return numberOfMovedColumns
+
+	}
 	@Override
 	def getDescription() {
-		def description = !currentSquare ? currentSquare : simbol  
-		"Rei de $description "
+		def description = currentSquare!=null ? currentSquare : simbol  
+		"Rei de $description"
 	}
 	
 }

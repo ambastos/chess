@@ -1,20 +1,11 @@
 package meu.chess.pieces;
 
-import static meu.chess.Board.*;
-import static org.junit.Assert.*;
+import static meu.chess.Board.*
+import static org.junit.Assert.*
+import meu.chess.Board
+import meu.chess.MovimentoInvalidoException
 
-import java.beans.Transient;
-
-import meu.chess.Board;
-import meu.chess.MovimentoInvalidoException;
-import meu.chess.pieces.Knight;
-import meu.chess.pieces.Pawn
-import meu.chess.pieces.Piece;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Categories.ExcludeCategory;
-import org.junit.rules.ExpectedException;
+import org.junit.Test
 
 class PawnMovementTest extends TestPieceMovement {
 
@@ -231,5 +222,55 @@ class PawnMovementTest extends TestPieceMovement {
 		board.movePiece(WHITE_PAWN , "A4", "A5")
 		
 	}
+	
+	@Test(expected=MovimentoInvalidoException.class)
+	void arrumandoOPeaoEstaAndandoNaDiagonal() {
 		
+		board.initializeWithInitialPosition()
+		board.movePiece(WHITE_PAWN, "E2", "F3")
+	}
+
+	@Test
+	void exibirTelaDePromocaoQuandoPeaoNaUltimaDasBrancas() {
+		
+		fail("Nao implementado")
+	}
+	@Test
+	void exibirTelaDePromocaoQuandoPeaoNaUltimaDasNegras() {
+		
+		fail("Nao implementado")
+	}
+	
+	@Test
+	void deveMudarParaAPecaPromovidaRainhaDasBrancas() {
+		
+		fail("Nao implementado")
+	}
+	@Test
+	void deveMudarParaAPecaPromovidaRainhaDasNegras() {
+		
+		fail("Nao implementado")
+	}
+	
+	@Test
+	void deveMudarParaAPecaPromovidaTorreDasBrancas() {
+		
+		fail("Nao implementado")
+	}
+	@Test
+	void deveMudarParaAPecaPromovidaTorreDasNegras() {
+		
+		fail("Nao implementado")
+	}
+	
+	@Test
+	void deveMudarParaAPecaPromovidaCavaloDasBrancas() {
+		
+		fail("Nao implementado")
+	}
+	@Test
+	void deveMudarParaAPecaPromovidaCavaloDasNegras() {
+		
+		fail("Nao implementado")
+	}
 }

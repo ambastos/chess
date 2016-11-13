@@ -23,104 +23,95 @@ protected class Diagonal {
 	private class DiagonalObject {
 		
 		def sourceSquareCordinate
-		def diagonal = []
+		def square = []
 		
 		DiagonalObject(squareCordinate) {
 			sourceSquareCordinate = squareCordinate
 		}
 		def add =  { cordinate ->
-			diagonal.add(cordinate)
+			square.add(cordinate)
 		}
 		
 		def cordinatesFromSource = {
 			
-			def squaresFromDirection = [1:[], 2:[]]
-			diagonal.each {
+			def squaresFromDirection = []
+			square.each {
 				def squareColumnNumber =  getNumberOfColumnFromCordinate(sourceSquareCordinate)
 				def columnNumber = getNumberOfColumnFromCordinate(it.cordinate)
-				if (columnNumber < squareColumnNumber) {
-					squaresFromDirection[1].add(it.cordinate)
-				}else if (columnNumber > squareColumnNumber) {
-					squaresFromDirection[2].add(it.cordinate)
-				}
+				
+				squaresFromDirection.add(it.cordinate)
+				
 			}
 			squaresFromDirection
 		}
 	}
 	
+	
 	def getDiagonals(squareCordinate) {
 		
 		def getDiagonalIndex = { cordinate, columnNumber, line ->
-			def index
-			def currentColumnNumber = getNumberOfColumnFromCordinate(cordinate)
+			
+			def index = 1
 			def currentLine = getLineFromCordinate(cordinate)
+			def currentColumnNumber = getNumberOfColumnFromCordinate(cordinate)
 			
-			if (line == 1 || line == Board.MAX_NUMBER_OF_LINES) {
-				index = 1
-			}else {
-			
-				def difColumnAndLine = (currentColumnNumber - columnNumber) - (currentLine - line)
-				if (difColumnAndLine == 0  ) {
-					index = 1
-				}else {
-					index = 2
-				}
-			}
-			index
+			if ( (currentLine < line && currentColumnNumber < columnNumber)) {
+				index= 1
+			}else if ((currentLine > line && currentColumnNumber < columnNumber)) {
+				index= 2
+			}else if ((currentLine > line && currentColumnNumber > columnNumber)) {
+				index= 3
+			}else if ((currentLine < line && currentColumnNumber > columnNumber)){
+				index= 4
+			}	
+			return index 
 		}
 		
-		def removeEmptyDiagonal = { diagonals ->
-			if (!diagonals[1]) {
-				diagonals.remove(1)
-			}
-			
-			if (!diagonals[2]) {
-				diagonals.remove(2)
-			}
-		}
 		
-		def revertSecondDiagonal = { diagonals ->
-			if (diagonals[2])
-				diagonals[2].diagonal = diagonals[2].diagonal.reverse()
-		}
+		def diagonals = [:]
 		
 		def columnNumber = getNumberOfColumnFromCordinate(squareCordinate)
 		def line = getLineFromCordinate(squareCordinate)
-				
-		def diagonals = [1:null,2:null]
-		def index = 1
 		
-		for (value in board.squares) {
-			def currentSquare = value.value
+		for (square in board.squares) {
+			def currentSquare = square.value
 			def cordinate = currentSquare.cordinate
-			if (isDiagonal(squareCordinate, cordinate)
-				 && board.hasThisSquare(cordinate)) {
+			if (cordinate.equals(squareCordinate) )
+				continue
+			
+			def isDiagonalAndHasThisSquare = isDiagonal(squareCordinate, cordinate) && board.hasThisSquare(cordinate)
+			
+			if (isDiagonalAndHasThisSquare) {
+				def index = getDiagonalIndex(cordinate, columnNumber, line)
 				
-				index = getDiagonalIndex(cordinate, columnNumber, line)
-				if  (cordinate == squareCordinate) {
-					def diagonal1 = diagonals[1] ?: new DiagonalObject(squareCordinate)
-					diagonal1.add(currentSquare)
-					diagonals[1] = diagonal1
-					
-					if (line != 1 && line != Board.MAX_NUMBER_OF_LINES) {
-						def diagonal2 = diagonals[2] ?: new DiagonalObject(squareCordinate)
-						diagonal2.add(currentSquare)
-						diagonals[2] = diagonal2
-					}
-				} else {
-					def diagonal = diagonals[index] ?: new DiagonalObject(squareCordinate)
-					diagonal.add(currentSquare)
-					diagonals[index] = diagonal
-				}
+				def diagonal = diagonals[index] ?: new DiagonalObject(squareCordinate)
+				diagonal.add(currentSquare)
+				diagonals.put(index, diagonal)
 			}
 		}
 		
-		removeEmptyDiagonal(diagonals)
-		revertSecondDiagonal(diagonals)
+		//reordenar
+		if (diagonals[1])
+			diagonals[1].square= diagonals[1].square.reverse()
+		if (diagonals[4])
+			diagonals[4].square= diagonals[4].square.reverse()
+			
+		if (diagonals.size() == 2) {
+			def newDiagonals = [:]
+			def newIdx = 1
+			diagonals.keySet().each { key->
+				newDiagonals.put(newIdx, diagonals.get(key))
+				newIdx++
+			}
+			diagonals = newDiagonals			 
+		}
 		
+		if (diagonals.size() == 1) {
+			diagonals = [1:diagonals.values().getAt(0)]
+		}
 		diagonals
-		
 	}
+	
 
 	def getDiagonal(initialSquareCordinate, finalSquareCordinate) {
 		def squaresFromDiagonal

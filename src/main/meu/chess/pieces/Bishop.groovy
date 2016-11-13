@@ -1,6 +1,5 @@
 package meu.chess.pieces
 
-import java.text.BreakDictionary;
 
 import meu.chess.Board;
 import meu.chess.MovimentoInvalidoException
@@ -24,23 +23,13 @@ class Bishop extends Piece implements ValidPiece {
 		def initialSquareCordinate = square.cordinate
 		
 		def isDiagonal = board.isDiagonal(initialSquareCordinate, finalSquareCordinate)
-
+ 
 		if (!isDiagonal) {
 			throw new MovimentoInvalidoException("Movimento do bispo em $square.cordinate é inválido.")
 		}else {
 			if (isDiagonal) {
 				def diagonal = board.getDiagonal(initialSquareCordinate, finalSquareCordinate)
 				validMovementsOnSquares(square, diagonal)
-			}
-		}
-	}
-	
-	private validMovementsOnSquares(square, squares) {
-		for (currentSquare in squares) {
-			if (currentSquare == square || currentSquare == null)
-				continue
-			if (currentSquare.content != square.content && currentSquare.hasPieceOfSameColor(square.content) ) {
-				throw new MovimentoInvalidoException("Movimento do bispo é inválido devido a presença do $currentSquare.content.description em $currentSquare.cordinate.")
 			}
 		}
 	}
