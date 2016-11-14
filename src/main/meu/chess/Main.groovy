@@ -43,7 +43,7 @@ class Main extends Thread {
 		def area
 		def window = new SwingBuilder().edt(){
 			frm = frame(name: "Chess", defaultCloseOperation: JFrame.EXIT_ON_CLOSE,
-				  visible:false, location: cp, size: size, undecorated: true
+				  visible:true, location: cp, size: size
 				)
 			{
 				panel{
@@ -99,6 +99,11 @@ class Main extends Thread {
 								 throw e;
 							 }finally {
 								 area.text =  str
+								 def line =""
+								 for (moveLine in board.moveLines) {
+									 line+=moveLine.toString()+"\n"
+								 }
+								 lateralBar.text = line 
 							 }
 						 },
 						 keyReleased: { ev-> },
@@ -108,11 +113,9 @@ class Main extends Thread {
 				
 			}
 		}
-		writeInstructions(lateralBar, 5, "Pressione as setas\nde direção\n para controlar e\n     ESPAÇO\n para marcar e definir\n a casa de destino" )
 		
 		area.text = board.draw()
 		
-		frm.setVisible(true)
 	}
 	
 

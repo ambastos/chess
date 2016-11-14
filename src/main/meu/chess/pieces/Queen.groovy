@@ -23,7 +23,7 @@ class Queen extends Piece implements ValidPiece {
 		def isVertical = board.isVertical(initialSquareCordinate, finalSquareCordinate)
 
 		if (!isDiagonal && !isHorizontal && !isVertical ) {
-			throw new MovimentoInvalidoException("Movimento da rainha em $square.cordinate é inválido.")
+			throw new MovimentoInvalidoException("Movimento da rainha em $square.cordinate para $finalSquareCordinate inválido.")
 		}else {
 			if (isDiagonal) {
 				def diagonal = board.getDiagonal(initialSquareCordinate, finalSquareCordinate)

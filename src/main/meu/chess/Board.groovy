@@ -390,7 +390,7 @@ class Board {
 		for (currentSquare in LShape) {
 			def pieceOnSquare = currentSquare?.content
 			if (isThereAPieceOfSameColor(pieceOnSquare, square, color))
-				break
+				continue
 
 			if (isSquareAttackeByKnight(pieceOnSquare, color)) {
 				evilPieces.add( pieceOnSquare )
@@ -407,22 +407,34 @@ class Board {
 		if (!moveLines.isEmpty())
 			moveLines.get(moveLines.size()-1)	
 	}
-	def registerMoveLine(piece, initialPosition, finalPosition) {
+	def registerMoveLine(piece, initialPosition, finalPosition, castle) {
 		
 		def lastMoveLine = getLastMoveLine()
-		def moveNumber = 1
+		def moveNumber = 0
+		
 		if (lastMoveLine) {
-			moveNumber = lastMoveLine.getMoveNumber()+1
-		} 
-			
-		def moveLine = new MoveLine()
+			moveNumber = lastMoveLine.getMoveNumber()
+		}
+		def moveLine
+		if (piece.color == Board.WHITE) {
+			moveLine = new MoveLine()
+			moveNumber+=1
+			addMoveLine(moveLine)
+		}else { 
+			moveLine = lastMoveLine
+		}	
+				
 		moveLine.moveNumber = moveNumber
-		def move	
+		
+		def enemyColor = piece.color == WHITE ? BLACK : WHITE
+		def isEnemyKingInCheck = isThereKingInCheck(enemyColor )
+		
+		def move = new Move(piece, initialPosition, finalPosition, isEnemyKingInCheck) 	
 		if (piece.color == Board.WHITE) 
-			moveLine.white = new Move(piece, initialPosition, finalPosition) 
+			moveLine.white = move
 		else
-			moveLine.black = new Move(piece, initialPosition, finalPosition)
-		addMoveLine(moveLine)	
+			moveLine.black = move
+			
 	}
 	
 	def isThisPieceMovedBefore(content) {
@@ -440,4 +452,13 @@ class Board {
 		}
 		return false
 	}
+	
+	void setCursorCordinate(cordinate) {
+		def line = getLineFromCordinate(cordinate)
+		def column = getNumberOfColumnFromCordinate(cordinate)
+		
+		if ((line < 1 || line > MAX_NUMBER_OF_LINES) || (column < 1 || column > MAX_NUMBER_OF_COLUMNS) )
+			return
+		this.cursorCordinate = cordinate
+	}	
 }

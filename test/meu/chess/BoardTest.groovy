@@ -41,6 +41,7 @@ class BoardTest {
 			
 			board = new Board()
 			board.initialize(pieces)
+			board.application = true
 	}
 	
 	@Test
@@ -113,7 +114,7 @@ class BoardTest {
 		"|PW |PW*|PW |PW*|   |PW*|PW |PW*|\n"+
 		"|___|___|___|___|___|___|___|___|\n"+
 		"|RW*|NW |BW*|QW |KW*|   |NW*|RW |\n"+
-		"|___|___|___|___|___|___|___|___|",
+		"|[_]|___|___|___|___|___|___|___|",
 		board.draw()
 	}
 	
@@ -213,7 +214,7 @@ class BoardTest {
 			board.movePiece(king, "E1", "G1")
 			fail()
 		}catch(e) {
-			assertEquals "Não é possível realizar o O-O das brancas pois a torre de H1 já realizou um movimento.",e.message
+			assertEquals "Não é possível realizar o O-O das brancas pois a torre de H1 já se moveu.",e.message
 		}
 	}
 	
@@ -306,8 +307,27 @@ class BoardTest {
 			board.movePiece(king, "E8", "B8")
 			fail("falhou")
 		}catch(e) {
-			assertEquals("O-O-O", e.message) 	
+			assertEquals("Não é possível realizar o O-O-O das negras pois a casa C8 está sendo atacada.", e.message) 	
 		}
 		
+	}
+	
+	@Test
+	void oReiE8AoEscaparDoXequeNaoPodeIrParaD7() {
+		
+		def pieces = [:]
+		pieces.put("E8", new King(BLACK))
+		pieces.put("E1",new King(WHITE))
+		
+		pieces.put("F1",new Bishop(WHITE))
+		board.initialize(pieces)
+		
+		try {
+			board.movePiece(new Bishop(WHITE), "F1", "B5")
+			board.movePiece(new King(BLACK), "E8", "D7")
+			fail("falhou")
+		}catch(e) {
+			assertEquals("Não é possível mover a peça Rei de E8 de E8 para D7 enquanto o rei em E8 se encontra em xeque.", e.message) 	
+		}
 	}
 }

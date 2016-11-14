@@ -25,7 +25,7 @@ class ConvertUtil {
 	
 	def static getColumnSimbolFromNumber(def column) {
 		if (column < 1 || column > Board.MAX_NUMBER_OF_COLUMNS) {
-			null
+			" "
 		}else {
 			BOARD_COLUMNS.get(column - 1)
 		}	

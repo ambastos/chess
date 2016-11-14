@@ -32,7 +32,7 @@ class MoveLineReader {
 		
 		def square = board.getSquareBy(cordinate1)
 		def piece = square.content
-		this.white = new Move(piece,cordinate1,cordinate2)
+		this.white = new Move(piece,cordinate1,cordinate2, false)
 		
 		def cordinate3 = m.group(3)
 		cordinate3  = cordinate3.length() == 3 ? cordinate3.substring(1) : cordinate3
@@ -42,7 +42,7 @@ class MoveLineReader {
 		
 		def square1 = board.getSquareBy(cordinate3)
 		def piece1 = square1.content
-		this.black = new Move(piece1,cordinate3,cordinate4)
+		this.black = new Move(piece1,cordinate3,cordinate4, false)
 		
 		
 	} 

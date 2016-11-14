@@ -38,7 +38,7 @@ class PawnMovementTest extends TestPieceMovement {
 		"|PW |PW*|PW |PW*|   |PW*|PW |PW*|\n"+
 		"|___|___|___|___|___|___|___|___|\n"+
 		"|RW*|NW |BW*|QW |KW*|BW |NW*|RW |\n"+
-		"|___|___|___|___|___|___|___|___|",
+		"|[_]|___|___|___|___|___|___|___|",
 		board.draw()
 		
 	}
@@ -149,7 +149,7 @@ class PawnMovementTest extends TestPieceMovement {
 		"|PW |PW*|PW |PW*|   |PW*|PW |PW*|\n"+
 		"|___|___|___|___|___|___|___|___|\n"+
 		"|RW*|NW |BW*|QW |KW*|BW |NW*|RW |\n"+
-		"|___|___|___|___|___|___|___|___|",
+		"|[_]|___|___|___|___|___|___|___|",
 		board.draw()
 	}
 	
@@ -178,7 +178,7 @@ class PawnMovementTest extends TestPieceMovement {
 		"|   |PW*|PW |PW*|PW |PW*|PW |PW*|\n"+
 		"|___|___|___|___|___|___|___|___|\n"+
 		"|RW*|NW |BW*|QW |KW*|BW |  *|RW |\n"+
-		"|___|___|___|___|___|___|___|___|",
+		"|[_]|___|___|___|___|___|___|___|",
 		board.draw()
 	}
 	
@@ -208,7 +208,7 @@ class PawnMovementTest extends TestPieceMovement {
 		"|   |PW*|PW |PW*|PW |PW*|   |PW*|\n"+
 		"|___|___|___|___|___|___|___|___|\n"+
 		"|RW*|NW |BW*|QW |KW*|BW |NW*|RW |\n"+
-		"|___|___|___|___|___|___|___|___|",
+		"|[_]|___|___|___|___|___|___|___|",
 		board.draw()
 	}
 	
@@ -220,7 +220,6 @@ class PawnMovementTest extends TestPieceMovement {
 		board.movePiece(WHITE_PAWN, "A2", "A4")		
 		board.movePiece(BLACK_PAWN , "A7", "A5")
 		board.movePiece(WHITE_PAWN , "A4", "A5")
-		
 	}
 	
 	@Test(expected=MovimentoInvalidoException.class)

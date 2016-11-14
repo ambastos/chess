@@ -57,7 +57,7 @@ class King extends Piece implements ValidPiece {
 		def oldLine = square.line
 		def newColumnNumber =  getNumberOfColumnFromCordinate(newCordinate)
 		def newLine = getLineFromCordinate(newCordinate)
-		def numberOfMovedColumns = oldColumnNumber - newColumnNumber
+		def numberOfMovedColumns = newColumnNumber - oldColumnNumber
 		
 		return numberOfMovedColumns
 

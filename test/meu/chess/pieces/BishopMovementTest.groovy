@@ -20,7 +20,7 @@ class BishopMovementTest extends TestPieceMovement {
 		
 			
 			board.initializeWithInitialPosition() 
-			
+			board.movePiece(WHITE_PAWN, "E2","E4")
 			board.movePiece(BLACK_PAWN, "D7","D6")
 			board.movePiece(BLACK_BISHOP, "C8","G4")
 			
@@ -33,14 +33,14 @@ class BishopMovementTest extends TestPieceMovement {
 			"|___|___|___|___|___|___|___|___|\n"+
 			"|  *|   |  *|   |  *|   |  *|   |\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
-			"|   |  *|   |  *|   |  *|BB |  *|\n"+
+			"|   |  *|   |  *|PW |  *|BB |  *|\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
 			"|  *|   |  *|   |  *|   |  *|   |\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
-			"|PW |PW*|PW |PW*|PW |PW*|PW |PW*|\n"+
+			"|PW |PW*|PW |PW*|   |PW*|PW |PW*|\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
 			"|RW*|NW |BW*|QW |KW*|BW |NW*|RW |\n"+
-			"|___|___|___|___|___|___|___|___|",
+			"|[_]|___|___|___|___|___|___|___|",
 			board.draw()
 			
 	}
@@ -77,7 +77,7 @@ class BishopMovementTest extends TestPieceMovement {
 			"|PW |PW*|PW |PW*|   |PW*|PW |PW*|\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
 			"|RW*|NW |BW*|QW |KW*|   |NW*|RW |\n"+
-			"|___|___|___|___|___|___|___|___|",
+			"|[_]|___|___|___|___|___|___|___|",
 			board.draw()
 			
 	}
@@ -127,7 +127,7 @@ class BishopMovementTest extends TestPieceMovement {
 			"|PW |PW*|PW |PW*|BW |PW*|PW |PW*|\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
 			"|RW*|NW |BW*|QW |KW*|   |NW*|RW |\n"+
-			"|___|___|___|___|___|___|___|___|",
+			"|[_]|___|___|___|___|___|___|___|",
 			board.draw()
 			
 	}
@@ -157,7 +157,7 @@ class BishopMovementTest extends TestPieceMovement {
 			"|PW |PW*|PW |PW*|PW |PW*|   |PW*|\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
 			"|RW*|NW |BW*|QW |KW*|   |NW*|RW |\n"+
-			"|___|___|___|___|___|___|___|___|",
+			"|[_]|___|___|___|___|___|___|___|",
 			board.draw()
 			
 	}
@@ -166,7 +166,7 @@ class BishopMovementTest extends TestPieceMovement {
 	public void deveMoverOBispoPretoParaTrasAteB4() {
 			
 			board.initializeWithInitialPosition()
-			
+			board.movePiece(WHITE_PAWN, "E2","E4")
 			board.movePiece(BLACK_PAWN, "E7","E5")
 			board.movePiece(BLACK_BISHOP, "F8","A3")
 			board.movePiece(BLACK_BISHOP, "A3","B4")
@@ -180,14 +180,14 @@ class BishopMovementTest extends TestPieceMovement {
 			"|___|___|___|___|___|___|___|___|\n"+
 			"|  *|   |  *|   |PB*|   |  *|   |\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
-			"|   |BB*|   |  *|   |  *|   |  *|\n"+
+			"|   |BB*|   |  *|PW |  *|   |  *|\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
 			"|  *|   |  *|   |  *|   |  *|   |\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
-			"|PW |PW*|PW |PW*|PW |PW*|PW |PW*|\n"+
+			"|PW |PW*|PW |PW*|   |PW*|PW |PW*|\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
 			"|RW*|NW |BW*|QW |KW*|BW |NW*|RW |\n"+
-			"|___|___|___|___|___|___|___|___|",
+			"|[_]|___|___|___|___|___|___|___|",
 			board.draw()
 			
 	}
@@ -217,7 +217,7 @@ class BishopMovementTest extends TestPieceMovement {
 			"|PW |PW*|PW |  *|PW |PW*|PW |PW*|\n"+
 			"|___|___|___|___|___|___|___|___|\n"+
 			"|RW*|NW |  *|QW |KW*|BW |NW*|RW |\n"+
-			"|___|___|___|___|___|___|___|___|",
+			"|[_]|___|___|___|___|___|___|___|",
 			board.draw()
 			
 	}

@@ -71,4 +71,8 @@ class Piece {
 	def isARock() {
 		(this instanceof Rock)
 	}
+	
+	def isPawn() {
+		(this instanceof Pawn)
+	}
 }

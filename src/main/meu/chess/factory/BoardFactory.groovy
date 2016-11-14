@@ -41,7 +41,7 @@ public class BoardFactory {
 		
 		/**Muda a descrição pois rei não está na casa atual(devido a verificação de cheque, mas sim de @initialPosition*/ 
 		if (verifyIfPieceIsNotTheOwnKing == false)
-			description = "Rei de "+ board.getSquareBy(initialPosition)
+			description = "rei"
 		 
 		def isKingInCheck = board.isThereKingInCheck(sameColor)
 		
@@ -52,20 +52,19 @@ public class BoardFactory {
 				if (piece.isAKing()) {
 					return
 				}	
-					 
-				def king = board.getKing(sameColor)
-				def kingCordinate = king.currentSquare.cordinate
-				
-				/**Muda a descrição pois rei não está na casa atual(devido a verificação de cheque, mas sim de @initialPosition*/ 
-				if (verifyIfPieceIsNotTheOwnKing == false)
-					kingCordinate = initialPosition 
-				
-				//Desfaz as alterações
-				if (undo)
-					undoUpdateSquaresContent(finalPosition, initialPosition, null)
-				
-				throw new MovimentoInvalidoException("Não é possível mover a peça $description de $initialPosition para $finalPosition enquanto o rei em $kingCordinate se encontra em xeque.")
-			}
+			}		 
+			def king = board.getKing(sameColor)
+			def kingCordinate = king.currentSquare.cordinate
+			
+			/**Muda a descrição pois rei não está na casa atual(devido a verificação de cheque, mas sim de @initialPosition*/ 
+			if (verifyIfPieceIsNotTheOwnKing == false)
+				kingCordinate = initialPosition 
+			
+			//Desfaz as alterações
+			if (undo)
+				undoUpdateSquaresContent(finalPosition, initialPosition, null)
+			
+			throw new MovimentoInvalidoException("Não é possível mover a peça $description de $initialPosition para $finalPosition pois o rei ficará em xeque.")
 		}
 	}	
 		
@@ -148,7 +147,7 @@ public class BoardFactory {
 				def columns = piece.getNumberOfMovedColumns(square, finalPosition)
 				def lineSquares = board.getLine(square.line)
 				def rockSquare
-				if (columns >= 2 ) 
+				if (columns <= 2 ) 
 					rockSquare = lineSquares.get(0)
 				else
 					rockSquare = lineSquares.get(lineSquares.size()-1)
@@ -232,7 +231,8 @@ public class BoardFactory {
 			
 			factory.atualizaVezDoJogador(piece)
 			
-			board.registerMoveLine(piece, initialPosition, finalPosition)
+			if (board.application)
+				board.registerMoveLine(piece, initialPosition, finalPosition, castle)
 		}
 	}
 }

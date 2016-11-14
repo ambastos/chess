@@ -48,6 +48,7 @@ class KnightMovementTest extends TestPieceMovement {
 	void validaMovimentoDoCavaloParaF6() {
 		
 		board.initializeWithInitialPosition()
+		board.movePiece(WHITE_KNIGHT, "B1", "C3")
 		board.movePiece(BLACK_PAWN, "F7", "F5")
 	
 		//Há uma peão branco na casa F5 que não invalida o movimento
@@ -84,7 +85,7 @@ class KnightMovementTest extends TestPieceMovement {
 		"|PW |PW*|PW |PW*|PW |PW*|PW |PW*|\n"+
 		"|___|___|___|___|___|___|___|___|\n"+
 		"|RW*|NW |BW*|QW |KW*|BW |  *|RW |\n"+
-		"|___|___|___|___|___|___|___|___|",
+		"|[_]|___|___|___|___|___|___|___|",
 		board.draw()
 
 	}
@@ -113,7 +114,7 @@ class KnightMovementTest extends TestPieceMovement {
 		"|PW |PW*|PW |PW*|PW |PW*|PW |PW*|\n"+
 		"|___|___|___|___|___|___|___|___|\n"+
 		"|RW*|NW |BW*|QW |KW*|BW |  *|RW |\n"+
-		"|___|___|___|___|___|___|___|___|",
+		"|[ ]|___|___|___|___|___|___|___|",
 		board.draw()
 	}
 
